@@ -2,6 +2,8 @@ require 'spec_helper'
 
 describe ClientsController do
   let(:valid_attributes) { {
+    name: 'Acme Corp',
+    shortname: 'acme',
     data: '{}'
   } }
   let(:invalid_attributes) { {
