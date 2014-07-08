@@ -6,9 +6,14 @@ describe ClientsController do
     shortname: 'acme',
     data: '{}'
   } }
+
   let(:invalid_attributes) { {
     bogus: 'crap'
   } }
+
+  let(:user) {
+    User.create(email:'han@jedi.org', password: 'Solo is the name')
+  }
 
   let(:valid_session) { {} }
 
@@ -20,6 +25,8 @@ describe ClientsController do
     it "assigns all clients as @clients" do
       client = Client.create! valid_attributes
       clients = Client.all
+
+      sign_in :user, user
       get :index, {}, valid_session
       assigns(:clients).should eq([client])
     end
@@ -28,6 +35,8 @@ describe ClientsController do
   describe "GET show" do
     it "assigns the requested client as @client" do
       client = Client.create! valid_attributes
+
+      sign_in :user, user
       get :show, {:id => client.to_param}, valid_session
       assigns(:client).should eq(client)
     end
@@ -35,6 +44,7 @@ describe ClientsController do
 
   describe "GET new" do
     it "assigns a new client as @client" do
+      sign_in :user, user
       get :new, {}, valid_session
       assigns(:client).should be_a_new(Client)
     end
@@ -43,12 +53,18 @@ describe ClientsController do
   describe "GET edit" do
     it "assigns the requested client as @client" do
       client = Client.create! valid_attributes
+
+      sign_in :user, user
       get :edit, {:id => client.to_param}, valid_session
       assigns(:client).should eq(client)
     end
   end
 
   describe "POST create" do
+    before(:each) do
+      sign_in :user, user
+    end
+
     describe "with valid params" do
       it "creates a new Client" do
         expect {
@@ -86,6 +102,10 @@ describe ClientsController do
   end
 
   describe "PUT update" do
+    before(:each) do
+      sign_in :user, user
+    end
+
     describe "with valid params" do
       it "updates the requested client" do
         client = Client.create! valid_attributes
@@ -126,6 +146,10 @@ describe ClientsController do
   end
 
   describe "DELETE destroy" do
+    before(:each) do
+      sign_in :user, user
+    end
+
     it "destroys the requested client" do
       client = Client.create! valid_attributes
       expect {

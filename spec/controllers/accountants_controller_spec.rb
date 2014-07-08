@@ -28,6 +28,10 @@ describe AccountantsController do
     "shortname" => "abctotaal",
   } }
 
+  let(:user) {
+    User.create(email: 'spock@starfleet.org', password: 'Clearly observed!')
+  }
+
   # This should return the minimal set of values that should be in the session
   # in order to pass any filters (e.g. authentication) defined in
   # AccountantsController. Be sure to keep this updated too.
@@ -40,6 +44,8 @@ describe AccountantsController do
   describe "GET index" do
     it "assigns all accountants as @accountants" do
       accountant = Accountant.create! valid_attributes
+
+      sign_in :user, user
       get :index, {}, valid_session
       assigns(:accountants).should eq([accountant])
     end
@@ -63,12 +69,18 @@ describe AccountantsController do
   describe "GET edit" do
     it "assigns the requested accountant as @accountant" do
       accountant = Accountant.create! valid_attributes
+
+      sign_in :user, user
       get :edit, {:id => accountant.to_param}, valid_session
       assigns(:accountant).should eq(accountant)
     end
   end
 
   describe "POST create" do
+    before(:each) do
+      sign_in :user, user
+    end
+
     describe "with valid params" do
       it "creates a new Accountant" do
         expect {
@@ -106,6 +118,10 @@ describe AccountantsController do
   end
 
   describe "PUT update" do
+    before(:each) do
+      sign_in :user, user
+    end
+
     describe "with valid params" do
       it "updates the requested accountant" do
         accountant = Accountant.create! valid_attributes
@@ -150,6 +166,10 @@ describe AccountantsController do
   end
 
   describe "DELETE destroy" do
+    before(:each) do
+      sign_in :user, user
+    end
+
     it "destroys the requested accountant" do
       accountant = Accountant.create! valid_attributes
       expect {

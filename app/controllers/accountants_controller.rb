@@ -1,4 +1,5 @@
 class AccountantsController < ApplicationController
+  before_action :authenticate_user!, only: [:edit, :create, :update, :destroy]
   before_action :set_accountant, only: [:show, :edit, :update, :destroy]
 
   # GET /accountants
