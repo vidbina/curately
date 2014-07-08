@@ -24,7 +24,7 @@ class AccountantsController < ApplicationController
   # POST /accountants
   # POST /accountants.json
   def create
-    @accountant = Accountant.new(accountant_params)
+    @accountant = Accountant.create(accountant_params)
 
     respond_to do |format|
       if @accountant.save
@@ -69,6 +69,6 @@ class AccountantsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def accountant_params
-      params.require(:accountant).permit(:name)
+      params.require(:accountant).permit(:name, :shortname)
     end
 end
