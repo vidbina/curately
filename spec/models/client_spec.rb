@@ -38,9 +38,9 @@ describe Client do
     Client.create(attributes).new_record?.should eq true
   end
 
-  it "fails when shortname begins with a number" do
+  it "succeeds when shortname begins with a number" do
     attributes[:shortname] = '2short'
-    Client.create(attributes).new_record?.should eq true
+    Client.create(attributes).new_record?.should eq false
   end
 
   it "fails when name is nil" do
@@ -51,5 +51,11 @@ describe Client do
   it "fails when name is empty" do
     attributes[:name] = ''
     Client.create(attributes).new_record?.should eq true
+  end
+
+  it "succeeds when only the shortname differs from a existing client" do
+    Client.create!(attributes).new_record?.should eq(false)
+    attributes[:shortname] = 'strflt'
+    Client.create!(attributes).new_record?.should eq(false)
   end
 end
