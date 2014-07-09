@@ -2,7 +2,7 @@ source 'https://rubygems.org'
 ruby '2.0.0'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '4.1.1'
+gem 'rails', '~> 4.1.4'
 # Use postgresql as the database for Active Record
 gem 'pg'
 # Use SCSS for stylesheets
@@ -40,6 +40,11 @@ gem 'spring',        group: :development
 
 gem 'devise'
 gem 'cancan'
+
+group :test do
+  gem 'factory_girl_rails'
+  gem 'ffaker'
+end
 
 gem 'rails_12factor', group: :production
 
