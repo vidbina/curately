@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 
 describe Membership do
   it "should be created if given a valid user and client" do
