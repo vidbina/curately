@@ -51,4 +51,27 @@ describe Curator do
     valid_attributes[:name] = ''
     expect(Curator.create(valid_attributes)).not_to be_persisted
   end
+
+  describe "available for curatorship" do
+    before(:each) do
+      @curator = create(:curator)
+      @curatorship = create(:curatorship, curator: @curator)
+    end
+
+    it "should be aware of related curatorships" do
+      expect(@curator.curatorships).to contain_exactly(@curatorship)
+    end
+
+    it "should accept other curatorships" do
+      expect {
+        @curator.curatorships << build(:curatorship)
+      }.to change(Curatorship, :count).by(1)
+    end
+
+    it "removes related curatorships upon curator removal" do
+      expect {
+        @curator.destroy
+      }.to change(Curatorship, :count).by(-1)
+    end
+  end
 end

@@ -18,4 +18,9 @@ FactoryGirl.define do
     user      { create(:user) }
     client    { create(:client) }
   end
+
+  factory :curatorship do
+    user      { create(:user) }
+    curator   { create(:curator) }
+  end
 end

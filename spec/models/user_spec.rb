@@ -42,4 +42,27 @@ describe User do
       }.to change(Membership, :count).by(-1)
     end
   end
+
+  describe "being a curator" do
+    before(:each) do
+      @user = create(:user)
+      @curatorship = create(:curatorship, user: @user)
+    end
+
+    it "should be aware of its curatorship" do
+      expect(@user.curatorships).to contain_exactly(@curatorship)
+    end
+
+    it "should accept other curatorships" do
+      expect {
+        @user.curatorships << build(:curatorship)
+      }.to change(Curatorship, :count).by(1)
+    end
+
+    it "removes curatorship upon user removal" do
+      expect {
+        @user.destroy
+      }.to change(Curatorship, :count).by(-1)
+    end
+  end
 end
