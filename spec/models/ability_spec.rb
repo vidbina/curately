@@ -10,11 +10,13 @@ RSpec.describe Ability, :type => :model do
     Curatorship.create(user: @user, curator: curator)
 
     expect(Ability.new(@user).can? :manage, curator).to be(true)
+    expect(Ability.new(@user).can? :manage, create(:client, curator: curator)).to be(true)
   end
 
   it "denied non-curators to modify clients" do
     curator = build(:curator)
     expect(Ability.new(@user).can? :manage, curator).to be(false)
+    expect(Ability.new(@user).can? :manage, create(:client, curator: curator)).to be(false)
   end
 
   it "allows members to view client data" do

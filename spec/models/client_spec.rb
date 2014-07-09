@@ -73,6 +73,13 @@ describe Client do
     expect(client.curator).to eq(curator)
   end
 
+  it "is aware of the curatorships of its curator" do
+    curator = create(:curator)
+    client = create(:client, curator: curator)
+    curatorship = create(:curatorship, curator: curator)
+    expect(client.curatorships).to contain_exactly(curatorship)
+  end
+
   describe "available for membership" do
     before(:each) do
       @client = create(:client)
