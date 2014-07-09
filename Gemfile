@@ -44,6 +44,7 @@ gem 'cancan'
 group :test do
   gem 'factory_girl_rails'
   gem 'ffaker'
+  gem 'rspec-activemodel-mocks'
 end
 
 gem 'rails_12factor', group: :production

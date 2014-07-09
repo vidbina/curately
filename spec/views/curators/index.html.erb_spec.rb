@@ -1,18 +1,18 @@
-require 'spec_helper'
+require 'rails_helper'
 
-describe "accountants/index" do
+describe "curators/index" do
   before(:each) do
-    assign(:accountants, [
-      stub_model(Accountant,
+    assign(:curators, [
+      stub_model(Curator,
         :name => "Name"
       ),
-      stub_model(Accountant,
+      stub_model(Curator,
         :name => "Name"
       )
     ])
   end
 
-  it "renders a list of accountants" do
+  it "renders a list of curators" do
     render
     # Run the generator again with the --webrat flag if you want to use webrat matchers
     assert_select "tr>td", :text => "Name".to_s, :count => 2

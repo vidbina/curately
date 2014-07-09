@@ -12,7 +12,7 @@ describe ClientsController do
   } }
 
   let(:user) {
-    User.create(email:'han@jedi.org', password: 'Solo is the name')
+    User.create(email:'han@alliance.org', password: 'Solo is the name')
   }
 
   let(:valid_session) { {} }

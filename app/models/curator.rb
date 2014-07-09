@@ -1,4 +1,4 @@
-class Accountant < ActiveRecord::Base
+class Curator < ActiveRecord::Base
   validates_length_of :name, minimum: 3, maximum: 40
 
   validates_length_of :shortname, minimum: 3, maximum: 15
