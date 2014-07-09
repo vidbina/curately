@@ -5,4 +5,5 @@ class Curator < ActiveRecord::Base
   validates_format_of :shortname, with: /\A[a-zA-Z][a-zA-Z0-9]*\z/i
 
   has_many :curatorships, dependent: :destroy
+  has_many :clients
 end

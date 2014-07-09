@@ -5,4 +5,5 @@ class Client < ActiveRecord::Base
   validates_format_of :shortname, with: /\A[a-zA-Z0-9]*\z/i
 
   has_many :memberships, dependent: :destroy
+  belongs_to :curator
 end

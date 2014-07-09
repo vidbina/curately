@@ -63,6 +63,16 @@ describe Client do
     expect(Client.new).to respond_to(:memberships)
   end
 
+  it "has a curator" do
+    expect(Client.new).to respond_to(:curator)
+  end
+
+  it "may have a curator" do
+    curator = create(:curator)
+    expect(client = create(:client, curator: curator)).to be_persisted
+    expect(client.curator).to eq(curator)
+  end
+
   describe "available for membership" do
     before(:each) do
       @client = create(:client)

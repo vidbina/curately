@@ -74,4 +74,15 @@ describe Curator do
       }.to change(Curatorship, :count).by(-1)
     end
   end
+
+  it "may have clients" do
+    expect(Curator.new).to respond_to(:clients)
+  end
+
+  it "remembers its clients" do
+    curator = Curator.create(valid_attributes)
+    expect {
+      curator.clients << build(:client)
+    }.to change(curator.clients, :length).by(1)
+  end
 end
