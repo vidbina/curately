@@ -11,11 +11,20 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140709181427) do
+ActiveRecord::Schema.define(version: 20140719183555) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "uuid-ossp"
+
+  create_table "accountants", id: :uuid, default: "uuid_generate_v4()", force: true do |t|
+    t.string   "name",       null: false
+    t.string   "shortname",  null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "accountants", ["shortname"], name: "index_accountants_on_shortname", unique: true, using: :btree
 
   create_table "clients", id: :uuid, default: "uuid_generate_v4()", force: true do |t|
     t.string   "name",       null: false
@@ -38,17 +47,19 @@ ActiveRecord::Schema.define(version: 20140709181427) do
   add_index "curators", ["shortname"], name: "index_curators_on_shortname", unique: true, using: :btree
 
   create_table "curatorships", id: false, force: true do |t|
-    t.integer  "user_id",    null: false
-    t.uuid     "curator_id", null: false
+    t.integer  "user_id",                    null: false
+    t.uuid     "curator_id",                 null: false
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.boolean  "is_admin",   default: false
   end
 
   create_table "memberships", id: false, force: true do |t|
-    t.integer  "user_id",    null: false
-    t.uuid     "client_id",  null: false
+    t.integer  "user_id",                    null: false
+    t.uuid     "client_id",                  null: false
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.boolean  "is_admin",   default: false
   end
 
   create_table "users", force: true do |t|

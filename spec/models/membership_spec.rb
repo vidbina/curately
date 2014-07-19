@@ -1,6 +1,10 @@
 require 'rails_helper'
 
-describe Membership do
+describe Membership, type: :model do
+  it "may contain administrative clearance" do
+    expect(Membership.new).to respond_to(:is_admin)
+  end
+
   it "should be created if given a valid user and client" do
     user = create(:user)
     client = create(:client)

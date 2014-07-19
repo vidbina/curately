@@ -1,6 +1,10 @@
 require 'rails_helper'
 
-RSpec.describe Curatorship, :type => :model do
+describe Curatorship, type: :model do
+  it "may contain administrative clearance" do
+    expect(Curatorship.new).to respond_to(:is_admin)
+  end
+
   it "should be created if given a valid user and curator" do
     user = create(:user)
     curator = create(:curator)
