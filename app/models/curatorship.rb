@@ -1,4 +1,6 @@
 class Curatorship < ActiveRecord::Base
+  self.primary_keys = :user_id, :curator_id
+
   belongs_to :curator
   belongs_to :user
 

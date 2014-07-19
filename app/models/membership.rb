@@ -1,5 +1,5 @@
 class Membership < ActiveRecord::Base
-  #self.primary_keys = :user_id, :client_id
+  self.primary_keys = :user_id, :client_id
 
   belongs_to :client
   belongs_to :user
