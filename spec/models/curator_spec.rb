@@ -55,11 +55,12 @@ describe Curator do
   describe "available for curatorship" do
     before(:each) do
       @curator = create(:curator)
-      @curatorship = create(:curatorship, curator: @curator)
     end
 
     it "should be aware of related curatorships" do
-      expect(@curator.curatorships).to contain_exactly(@curatorship)
+      expect{
+        create(:curatorship, curator: @curator)
+      }.to change(@curator.curatorships, :count).by(1)
     end
 
     it "should accept other curatorships" do
@@ -69,9 +70,11 @@ describe Curator do
     end
 
     it "removes related curatorships upon curator removal" do
+      count = rand(1..10)
+      count.times { create(:curatorship, curator: @curator) }
       expect {
         @curator.destroy
-      }.to change(Curatorship, :count).by(-1)
+      }.to change(Curatorship, :count).by(-count)
     end
   end
 

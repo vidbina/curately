@@ -23,11 +23,12 @@ describe User do
   describe "being a member" do
     before(:each) do
       @user = create(:user)
-      @membership = create(:membership, user: @user)
     end
 
     it "should be aware of its membership" do
-      expect(@user.memberships).to contain_exactly(@membership)
+      expect {
+        @membership = create(:membership, user: @user)
+      }.to change(@user.memberships, :count).by(1)
     end
 
     it "should accept other memberships" do
@@ -36,21 +37,24 @@ describe User do
       }.to change(Membership, :count).by(1)
     end
 
-    it "removes membership upon user removal" do
+    it "removes memberships upon user removal" do
+      count = rand(1..10)
+      count.times { create(:membership, user: @user) }
       expect {
         @user.destroy
-      }.to change(Membership, :count).by(-1)
+      }.to change(Membership, :count).by(-count)
     end
   end
 
   describe "being a curator" do
     before(:each) do
       @user = create(:user)
-      @curatorship = create(:curatorship, user: @user)
     end
 
-    it "should be aware of its curatorship" do
-      expect(@user.curatorships).to contain_exactly(@curatorship)
+    it "should be aware of its curatorships" do
+      expect {
+        @curatorship = create(:curatorship, user: @user)
+      }.to change(@user.curatorships, :count).by(1)
     end
 
     it "should accept other curatorships" do
@@ -60,9 +64,11 @@ describe User do
     end
 
     it "removes curatorship upon user removal" do
+      count = rand(1..10)
+      count.times { create(:curatorship, user: @user) }
       expect {
         @user.destroy
-      }.to change(Curatorship, :count).by(-1)
+      }.to change(Curatorship, :count).by(-count)
     end
   end
 end

@@ -76,18 +76,20 @@ describe Client do
   it "is aware of the curatorships of its curator" do
     curator = create(:curator)
     client = create(:client, curator: curator)
-    curatorship = create(:curatorship, curator: curator)
-    expect(client.curatorships).to contain_exactly(curatorship)
+    expect {
+      curatorship = create(:curatorship, curator: curator)
+    }.to change(client.curatorships, :count).by(1)
   end
 
   describe "available for membership" do
     before(:each) do
       @client = create(:client)
-      @membership = create(:membership, client: @client)
     end
 
     it "should be aware of related memberships" do
-      expect(@client.memberships).to contain_exactly(@membership)
+      expect {
+        @membership = create(:membership, client: @client)
+      }.to change(@client.memberships, :count).by(1)
     end
 
     it "should accept other memberships" do
@@ -97,9 +99,11 @@ describe Client do
     end
 
     it "removes related memberships upon client removal" do
+      count = rand(1..10)
+      count.times { create(:membership, client: @client) }
       expect {
         @client.destroy
-      }.to change(Membership, :count).by(-1)
+      }.to change(Membership, :count).by(-count)
     end
   end
 end
