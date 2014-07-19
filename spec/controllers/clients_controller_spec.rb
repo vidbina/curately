@@ -137,7 +137,7 @@ describe ClientsController do
     describe "by a member" do
       describe "who has no adminstrator privileges" do
         before(:each) do
-          create(:membership, admin: false, user: user, client: client)
+          create(:membership, is_admin: false, user: user, client: client)
         end
 
         it "is always ignored" do
@@ -151,7 +151,7 @@ describe ClientsController do
 
       describe "who is administrator" do
         before(:each) do
-          create(:membership, admin: true, user: user, client: client)
+          create(:membership, is_admin: true, user: user, client: client)
         end
   
         describe "with invalid params" do

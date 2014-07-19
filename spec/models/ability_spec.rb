@@ -47,6 +47,47 @@ describe Ability, :type => :model do
         expect(Ability.new(user).can? :manage, curator).to be(true)
       end
     end
+
+    describe "to deactivate a curator" do
+      it "does not exists for non-administrative curators" do
+        expect(Ability.new(user).can? :deactivate, curator).to be(false)
+      end
+
+      it "is reserved to administrators" do
+        curatorship.is_admin = true
+        curatorship.save
+        expect(Ability.new(user).can? :deactivate, curator).to be(true)
+      end
+    end
+
+    describe "to remove a curator" do
+      it "is not available to regular users" do
+        expect(Ability.new(user).can? :destroy, curator).to be(false)
+      end
+
+      it "is not even available to administrators" do
+        curatorship.is_admin = true
+        curatorship.save
+        expect(Ability.new(user).can? :destroy, curator).to be(false)
+      end
+
+      describe "that has been disabled" do
+        before do
+          curator.disabled = true
+          curator.save
+        end
+
+        it "is not available for regular users" do
+          expect(Ability.new(user).can? :destroy, curator).to be(false)
+        end
+
+        it "is only reserved to administrators" do
+          curatorship.is_admin = true
+          curatorship.save
+          expect(Ability.new(user).can? :destroy, client).to be(true)
+        end
+      end
+    end
   end
 
   describe "for members" do
@@ -59,7 +100,7 @@ describe Ability, :type => :model do
       end
     end
 
-    describe "to manage clients" do
+    describe "to manage a client" do
       it "does not exist for non-administrative users" do
         expect(Ability.new(user).can? :manage, client).to be(false)
       end
@@ -71,7 +112,7 @@ describe Ability, :type => :model do
       end
     end
 
-    describe "to update clients" do
+    describe "to update a client" do
       it "is not available to regular users" do
         expect(Ability.new(user).can? :update, client).to be(false)
       end
@@ -80,6 +121,47 @@ describe Ability, :type => :model do
         membership.is_admin = true
         membership.save
         expect(Ability.new(user).can? :update, client).to be(true)
+      end
+    end
+
+    describe "to deactivate a client" do
+      it "is not available to regular users" do
+        expect(Ability.new(user).can? :deactivate, client).to be(false)
+      end
+
+      it "is reserved to administrators only" do
+        membership.is_admin = true
+        membership.save
+        expect(Ability.new(user).can? :deactivate, client).to be(true)
+      end
+    end
+
+    describe "to remove a client" do
+      it "is not available to regular users" do
+        expect(Ability.new(user).can? :destroy, client).to be(false)
+      end
+
+      it "is not even available to administrators" do
+        membership.is_admin = true
+        membership.save
+        expect(Ability.new(user).can? :destroy, client).to be(false)
+      end
+
+      describe "that has been disabled" do
+        before do
+          client.disabled = true
+          client.save
+        end
+
+        it "is not available to regular users" do
+          expect(Ability.new(user).can? :destroy, client).to be(false)
+        end
+
+        it "is only reserved to administrators" do
+          membership.is_admin = true
+          membership.save
+          expect(Ability.new(user).can? :destroy, client).to be(true)
+        end
       end
     end
   end

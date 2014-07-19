@@ -30,5 +30,8 @@ class Ability
     can :update, Client do |client|
       !user.memberships(client: client, is_admin: true).empty?
     end
+
+    cannot :destroy, Client
+    cannot :destroy, Curator
   end
 end
