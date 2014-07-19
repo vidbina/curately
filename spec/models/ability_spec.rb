@@ -1,33 +1,75 @@
 require 'rails_helper'
 
-RSpec.describe Ability, :type => :model do
+describe Ability, :type => :model do
   before do
     @user = create(:user)
   end
 
-  it "allows curators to modify clients" do
-    curator = build(:curator)
-    Curatorship.create(user: @user, curator: curator)
-
-    expect(Ability.new(@user).can? :manage, curator).to be(true)
-    expect(Ability.new(@user).can? :manage, create(:client, curator: curator)).to be(true)
-  end
+  let(:client) { build(:client) }
+  let(:curator) { build(:curator) }
 
   it "denied non-curators to modify clients" do
-    curator = build(:curator)
     expect(Ability.new(@user).can? :manage, curator).to be(false)
     expect(Ability.new(@user).can? :manage, create(:client, curator: curator)).to be(false)
   end
 
-  it "allows members to view client data" do
-    client = build(:client)
-    Membership.create(user: @user, client: client)
+  describe "for curators" do
+    before(:each) do
+      Curatorship.create(user: @user, curator: curator)
+    end
 
-    expect(Ability.new(@user).can? :read, client).to be(true)
+    describe "to manage clients" do
+      it "exists" do
+        expect(Ability.new(@user).can? :manage, curator).to be(true)
+        expect(Ability.new(@user).can? :manage, create(:client, curator: curator)).to be(true)
+      end
+    end
   end
 
-  it "denied non-members to view client data" do
-    client = build(:client)
-    expect(Ability.new(@user).can? :read, client).to be(false)
+  describe "for members" do
+    before(:each) do
+      Membership.create(user: @user, client: client)
+    end
+
+    describe "to view client information" do
+      it "exists" do
+        expect(Ability.new(@user).can? :read, client).to be(true)
+      end
+    end
+  end
+
+  describe "for anyone" do
+    describe "to create a client" do
+      it "exists" do
+        client = build(:client)
+        expect(Ability.new(@user).can? :create, client).to be(true)
+      end
+    end
+  
+    describe "to modify client information" do
+      it "does not exist" do
+        expect(Ability.new(@user).can? :update, client).to be(false)
+      end
+    end
+  
+    
+    describe "to update client information" do
+      it "does not exist" do
+        expect(Ability.new(@user).can? :update, client).to be(false)
+      end
+    end
+
+    describe "to read client information" do
+      it "does not exist" do
+        expect(Ability.new(@user).can? :read, client).to be(false)
+      end
+    end
+
+    describe "to manage clients" do
+      it "does not exist" do
+        expect(Ability.new(@user).can? :manage, curator).to be(false)
+        expect(Ability.new(@user).can? :manage, create(:client, curator: curator)).to be(false)
+      end
+    end
   end
 end
