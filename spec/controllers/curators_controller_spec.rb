@@ -47,7 +47,7 @@ describe CuratorsController do
 
       sign_in :user, user
       get :index, {}, valid_session
-      assigns(:curators).should eq([curator])
+      expect(assigns(:curators)).to eq([curator])
     end
   end
 
@@ -55,14 +55,14 @@ describe CuratorsController do
     it "assigns the requested curator as @curator" do
       curator = Curator.create! valid_attributes
       get :show, {:id => curator.to_param}, valid_session
-      assigns(:curator).should eq(curator)
+      expect(assigns(:curator)).to eq(curator)
     end
   end
 
   describe "GET new" do
     it "assigns a new curator as @curator" do
       get :new, {}, valid_session
-      assigns(:curator).should be_a_new(Curator)
+      expect(assigns(:curator)).to be_a_new(Curator)
     end
   end
 
@@ -72,7 +72,7 @@ describe CuratorsController do
 
       sign_in :user, user
       get :edit, {:id => curator.to_param}, valid_session
-      assigns(:curator).should eq(curator)
+      expect(assigns(:curator)).to eq(curator)
     end
   end
 
@@ -90,29 +90,28 @@ describe CuratorsController do
 
       it "assigns a newly created curator as @curator" do
         post :create, {:curator => valid_attributes}, valid_session
-        assigns(:curator).should be_a(Curator)
-        assigns(:curator).should be_persisted
+        expect(assigns(:curator)).to be_persisted
       end
 
       it "redirects to the created curator" do
         post :create, {:curator => valid_attributes}, valid_session
-        response.should redirect_to(Curator.last)
+        expect(response).to redirect_to(Curator.last)
       end
     end
 
     describe "with invalid params" do
       it "assigns a newly created but unsaved curator as @curator" do
         # Trigger the behavior that occurs when invalid params are submitted
-        Curator.any_instance.stub(:save).and_return(false)
+        allow(instance_double(Curator)).to receive(:save).and_return(false)
         post :create, {:curator => { "name" => "invalid value" }}, valid_session
-        assigns(:curator).should be_a_new(Curator)
+        expect(assigns(:curator)).to be_a_new(Curator)
       end
 
       it "re-renders the 'new' template" do
         # Trigger the behavior that occurs when invalid params are submitted
-        Curator.any_instance.stub(:save).and_return(false)
+        allow(instance_double(Curator)).to receive(:save).and_return(false)
         post :create, {:curator => { "name" => "invalid value" }}, valid_session
-        response.should render_template("new")
+        expect(response).to render_template("new")
       end
     end
   end
@@ -129,20 +128,20 @@ describe CuratorsController do
         # specifies that the Curator created on the previous line
         # receives the :update_attributes message with whatever params are
         # submitted in the request.
-        Curator.any_instance.should_receive(:update).with({ "name" => "MyString" })
+        expect_any_instance_of(Curator).to receive(:update).with({ "name" => "MyString" })
         put :update, {:id => curator.to_param, :curator => { "name" => "MyString" }}, valid_session
       end
 
       it "assigns the requested curator as @curator" do
         curator = Curator.create! valid_attributes
         put :update, {:id => curator.to_param, :curator => valid_attributes}, valid_session
-        assigns(:curator).should eq(curator)
+        expect(assigns(:curator)).to eq(curator)
       end
 
       it "redirects to the curator" do
         curator = Curator.create! valid_attributes
         put :update, {:id => curator.to_param, :curator => valid_attributes}, valid_session
-        response.should redirect_to(curator)
+        expect(response).to redirect_to(curator)
       end
     end
 
@@ -150,17 +149,17 @@ describe CuratorsController do
       it "assigns the curator as @curator" do
         curator = Curator.create! valid_attributes
         # Trigger the behavior that occurs when invalid params are submitted
-        Curator.any_instance.stub(:save).and_return(false)
-        put :update, {:id => curator.to_param, :curator => { "name" => "invalid value" }}, valid_session
-        assigns(:curator).should eq(curator)
+        allow(instance_double(Curator)).to receive(:save).and_return(false)
+        put :update, {:id => curator.to_param, :curator => { "name" => "" }}, valid_session
+        expect(assigns(:curator)).to eq(curator)
       end
 
       it "re-renders the 'edit' template" do
         curator = Curator.create! valid_attributes
         # Trigger the behavior that occurs when invalid params are submitted
-        Curator.any_instance.stub(:save).and_return(false)
-        put :update, {:id => curator.to_param, :curator => { "name" => "invalid value" }}, valid_session
-        response.should render_template("edit")
+        allow(instance_double(Curator)).to receive(:save).and_return(false)
+        put :update, {:id => curator.to_param, :curator => { "name" => "" }}, valid_session
+        expect(response).to render_template("edit")
       end
     end
   end
@@ -180,7 +179,7 @@ describe CuratorsController do
     it "redirects to the curators list" do
       curator = Curator.create! valid_attributes
       delete :destroy, {:id => curator.to_param}, valid_session
-      response.should redirect_to(curators_url)
+      expect(response).to redirect_to(curators_url)
     end
   end
 
