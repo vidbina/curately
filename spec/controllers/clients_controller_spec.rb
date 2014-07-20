@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 
 describe ClientsController do
   let(:valid_attributes) { {
@@ -8,37 +8,56 @@ describe ClientsController do
   } }
 
   let(:invalid_attributes) { {
-    bogus: 'crap'
+    name: ''
   } }
 
   let(:user) {
-    User.create(email:'han@jedi.org', password: 'Solo is the name')
+    User.create(email:'han@alliance.org', password: 'Solo is the name')
   }
+
+  let(:client) { create(:client) }
 
   let(:valid_session) { {} }
 
   before(:all) do
     Client.destroy_all
+    User.destroy_all
   end
 
   describe "GET index" do
-    it "assigns all clients as @clients" do
-      client = Client.create! valid_attributes
-      clients = Client.all
-
+    before(:each) do
       sign_in :user, user
+    end
+
+    it "displays nothing if user is not subscribed" do
       get :index, {}, valid_session
-      assigns(:clients).should eq([client])
+      expect(assigns(:clients)).to eq([])
+    end
+
+    it "displays all subscribed clients" do
+      user.memberships << Membership.new(client: client)
+      get :index, {}, valid_session
+      expect(assigns(:clients)).to eq([client])
     end
   end
 
   describe "GET show" do
-    it "assigns the requested client as @client" do
-      client = Client.create! valid_attributes
-
+    it "is unreachable to a user who has no business looking into it" do
       sign_in :user, user
-      get :show, {:id => client.to_param}, valid_session
-      assigns(:client).should eq(client)
+      get :show, { :id => client.to_param }, valid_session
+      expect(response.status).to eq(403)
+    end
+
+    describe "by a client member" do
+      before(:each) do
+        user.memberships << Membership.new(client: client)
+      end
+
+      it "assigns the requested client as @client" do
+        sign_in :user, user
+        get :show, {:id => client.to_param}, valid_session
+        expect(assigns(:client)).to eq(client)
+      end
     end
   end
 
@@ -46,7 +65,7 @@ describe ClientsController do
     it "assigns a new client as @client" do
       sign_in :user, user
       get :new, {}, valid_session
-      assigns(:client).should be_a_new(Client)
+      expect(assigns(:client)).to be_a_new(Client)
     end
   end
 
@@ -56,7 +75,7 @@ describe ClientsController do
 
       sign_in :user, user
       get :edit, {:id => client.to_param}, valid_session
-      assigns(:client).should eq(client)
+      expect(assigns(:client)).to eq(client)
     end
   end
 
@@ -74,29 +93,28 @@ describe ClientsController do
 
       it "assigns a newly created client as @client" do
         post :create, {:client => valid_attributes}, valid_session
-        assigns(:client).should be_a(Client)
-        assigns(:client).should be_persisted
+        expect(assigns(:client)).to be_persisted
       end
 
       it "redirects to the created client" do
         post :create, {:client => valid_attributes}, valid_session
-        response.should redirect_to(Client.last)
+        expect(response).to redirect_to(Client.last)
       end
     end
 
     describe "with invalid params" do
       it "assigns a newly created but unsaved client as @client" do
         # Trigger the behavior that occurs when invalid params are submitted
-        Client.any_instance.stub(:save).and_return(false)
+        allow(instance_double(Client)).to receive(:save).and_return(false)
         post :create, {:client => invalid_attributes}, valid_session
-        assigns(:client).should be_a_new(Client)
+        expect(assigns(:client)).to be_a_new(Client)
       end
 
       it "re-renders the 'new' template" do
         # Trigger the behavior that occurs when invalid params are submitted
-        Client.any_instance.stub(:save).and_return(false)
+        allow(instance_double(Client)).to receive(:save).and_return(false)
         post :create, {:client => invalid_attributes}, valid_session
-        response.should render_template("new")
+        expect(response).to render_template("new")
       end
     end
   end
@@ -106,43 +124,76 @@ describe ClientsController do
       sign_in :user, user
     end
 
-    describe "with valid params" do
-      it "updates the requested client" do
-        client = Client.create! valid_attributes
-        Client.any_instance.should_receive(:update).with({ "name" => "Something" })
-        put :update, {:id => client.to_param, :client => { "name" => "Something" }}, valid_session
+    let(:client) { create(:client) }
+
+    describe "by a curator" do
+      before(:each) do
+        # TODO: make user curator
       end
 
-      it "assigns the requested client as @client" do
-        client = Client.create! valid_attributes
-        put :update, {:id => client.to_param, :client => valid_attributes}, valid_session
-        assigns(:client).should eq(client)
+      it "updates the requested client"
+    end
+
+    describe "by a member" do
+      describe "who has no adminstrator privileges" do
+        before(:each) do
+          create(:membership, is_admin: false, user: user, client: client)
+        end
+
+        it "is always ignored" do
+          put :update, {:id => client.to_param, :client => valid_attributes}, valid_session
+          #p "attr=#{valid_attributes} client=#{client.attributes}"
+          p Ability.new(user).can? :update, client
+          expect(response).to redirect_to(edit_client_url)
+          #assert_response(403)
+        end
       end
 
-      it "redirects to the client" do
-        client = Client.create! valid_attributes
-        put :update, {:id => client.to_param, :client => valid_attributes}, valid_session
-        response.should redirect_to(client)
+      describe "who is administrator" do
+        before(:each) do
+          create(:membership, is_admin: true, user: user, client: client)
+        end
+  
+        describe "with invalid params" do
+          it "assigns the client as @client" do
+            allow(instance_double(Client)).to receive(:save).and_return(false)
+            put :update, {:id => client.to_param, :client => invalid_attributes}, valid_session
+            expect(assigns(:client)).to eq(client)
+          end
+    
+          it "re-renders the 'edit' template" do
+            allow(instance_double(Client)).to receive(:save).and_return(false)
+            put :update, {:id => client.to_param, :client => invalid_attributes}, valid_session
+            expect(response).to render_template("edit")
+          end
+        end
+  
+        describe "with valid params" do
+          it "updates the requested client" do
+            expect_any_instance_of(Client).to receive(:update).with({ "name" => "Something" })
+            put :update, {:id => client.to_param, :client => { "name" => "Something" }}, valid_session
+          end
+    
+          it "assigns the requested client as @client" do
+            put :update, {:id => client.to_param, :client => valid_attributes}, valid_session
+            expect(assigns(:client)).to eq(client)
+          end
+    
+          it "redirects to the client" do
+            put :update, {:id => client.to_param, :client => valid_attributes}, valid_session
+            expect(response).to redirect_to(client)
+          end
+        end
       end
     end
 
-    describe "with invalid params" do
-      it "assigns the client as @client" do
-        client = Client.create! valid_attributes
-        # Trigger the behavior that occurs when invalid params are submitted
-        Client.any_instance.stub(:save).and_return(false)
-        put :update, {:id => client.to_param, :client => invalid_attributes}, valid_session
-        assigns(:client).should eq(client)
-      end
-
-      it "re-renders the 'edit' template" do
-        client = Client.create! valid_attributes
-        # Trigger the behavior that occurs when invalid params are submitted
-        Client.any_instance.stub(:save).and_return(false)
-        put :update, {:id => client.to_param, :client => invalid_attributes}, valid_session
-        response.should render_template("edit")
+    describe "by a nobody" do
+      it "is discarded" do
+        put :update, { :id => client.to_param, :client => valid_attributes}, valid_session
+        assert_response 403
       end
     end
+
   end
 
   describe "DELETE destroy" do
@@ -150,17 +201,50 @@ describe ClientsController do
       sign_in :user, user
     end
 
-    it "destroys the requested client" do
-      client = Client.create! valid_attributes
-      expect {
+    let(:client) { create(:client) }
+
+    describe "by a nobody" do
+      it "is denied" do
         delete :destroy, {:id => client.to_param}, valid_session
-      }.to change(Client, :count).by(-1)
+        assert_response 403
+      end
     end
 
-    it "redirects to the clients list" do
-      client = Client.create! valid_attributes
-      delete :destroy, {:id => client.to_param}, valid_session
-      response.should redirect_to(clients_url)
+    describe "by a client member" do
+      before(:each) do
+        Membership.create(user: user, client: client)
+      end
+
+      it "is denied" do
+        delete :destroy, {:id => client.to_param}, valid_session
+        assert_response 403
+      end
+    end
+
+    describe "by the client curator" do
+      before(:each) do
+        # TODO: give memberships and curatorships a admin flag
+        #
+        # delete by a curator admin should remove the client from the 
+        # curatorship but leave the client intact
+        #
+        # delete by a member admin should remove the client from listing, 
+        # perhaps even remove the client entirely
+        #client.curatorships << build(:curatorship, user: user)
+      end
+
+      it "destroys the requested client" do
+        skip
+        expect {
+          delete :destroy, {:id => client.to_param}, valid_session
+        }.to change(Client, :count).by(-1)
+      end
+  
+      it "redirects to the clients list" do
+        skip
+        delete :destroy, {:id => client.to_param}, valid_session
+        expect(response).to redirect_to(clients_url)
+      end
     end
   end
 

@@ -19,3 +19,6 @@
 
 ~*
 *.swp
+*.bash
+*.sh
+.rspec
