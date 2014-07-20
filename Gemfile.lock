@@ -29,6 +29,7 @@ GEM
       tzinfo (~> 1.1)
     arel (5.0.1.20140414130214)
     bcrypt (3.1.7)
+    bson (2.3.0)
     builder (3.2.2)
     cancan (1.6.10)
     coffee-rails (4.0.1)
@@ -40,6 +41,7 @@ GEM
     coffee-script-source (1.7.0)
     composite_primary_keys (7.0.3)
       activerecord (~> 4.1.4)
+    connection_pool (2.0.0)
     devise (3.2.4)
       bcrypt (~> 3.0)
       orm_adapter (~> 0.1)
@@ -69,7 +71,18 @@ GEM
       treetop (~> 1.4.8)
     mime-types (1.25.1)
     minitest (5.4.0)
+    mongoid (4.0.0)
+      activemodel (~> 4.0)
+      moped (~> 2.0.0)
+      origin (~> 2.1)
+      tzinfo (>= 0.3.37)
+    moped (2.0.0)
+      bson (~> 2.2)
+      connection_pool (~> 2.0)
+      optionable (~> 0.2.0)
     multi_json (1.10.1)
+    optionable (0.2.0)
+    origin (2.1.1)
     orm_adapter (0.5.0)
     pg (0.17.1)
     polyglot (0.3.5)
@@ -167,6 +180,7 @@ DEPENDENCIES
   ffaker
   jbuilder (~> 2.0)
   jquery-rails
+  mongoid (~> 4.0.0)
   pg
   rails (~> 4.1.4)
   rails_12factor

@@ -39,6 +39,8 @@ gem 'composite_primary_keys', '~> 7.0.3'
 # Use debugger
 # gem 'debugger', group: [:development, :test]
 
+gem 'mongoid', '~> 4.0.0'
+
 gem 'devise'
 gem 'cancan'
 
