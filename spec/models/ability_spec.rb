@@ -7,14 +7,14 @@ describe Ability, :type => :model do
   
   before(:each) do
     2.times { create(:curatorship, user: user, is_admin: true) }
-    9.times { create(:curatorship, user: user, is_admin: false) }
+    1.times { create(:curatorship, user: user, is_admin: false) }
 
-    5.times { create(:membership, user: user,  is_admin: true) }
-    4.times { create(:membership, user: user,  is_admin: false) }
+    1.times { create(:membership, user: user,  is_admin: true) }
+    2.times { create(:membership, user: user,  is_admin: false) }
   end
 
   describe "for curators" do
-    let(:curatorship) { 
+    let!(:curatorship) { 
       create(:curatorship, user: user, curator: curator, is_admin: false) 
     }
 
@@ -91,6 +91,22 @@ describe Ability, :type => :model do
           curatorship.save
           expect(Ability.new(user).can? :destroy, curator).to be(true)
         end
+      end
+    end
+
+    describe "to manage templates" do
+      let(:template) { create(:template) }
+
+      it "does not exist for non-owned templates" do
+        expect(curatorship.user).to be(user)
+        expect(Ability.new(user).can? :manage, template).to be(false)
+      end
+
+      it "exists" do
+        curator.template = template
+        curator.save
+
+        expect(Ability.new(user).can? :manage, template).to be(true)
       end
     end
   end

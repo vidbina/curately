@@ -40,6 +40,15 @@ class Ability
         curator_admin(user, curator)
       end
     end
+
+    can :manage, Template do |template|
+      curator = Curator.all.where(template_id: template.id.to_binary).first
+      if curator
+        !curator.curatorships.empty?
+      else
+        false
+      end
+    end
   end
   
   private

@@ -6,4 +6,6 @@ class User < ActiveRecord::Base
 
   has_many :curatorships, dependent: :destroy
   has_many :memberships, dependent: :destroy
+
+  has_many :curators, through: :curatorships
 end
