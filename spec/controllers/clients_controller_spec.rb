@@ -100,6 +100,12 @@ describe ClientsController do
         post :create, {:client => valid_attributes}, valid_session
         expect(response).to redirect_to(Client.last)
       end
+
+      it "makes the creating user the administrator" do
+        expect {
+          post :create, {:client => valid_attributes}, valid_session
+        }.to change(user.memberships.where(is_admin: true), :size).by(1)
+      end
     end
 
     describe "with invalid params" do

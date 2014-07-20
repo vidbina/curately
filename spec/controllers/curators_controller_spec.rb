@@ -97,6 +97,12 @@ describe CuratorsController do
         post :create, {:curator => valid_attributes}, valid_session
         expect(response).to redirect_to(Curator.last)
       end
+
+      it "makes the creating user the administrator" do
+        expect {
+          post :create, {:curator => valid_attributes}, valid_session
+        }.to change(user.curatorships.where(is_admin: true), :size).by(1)
+      end
     end
 
     describe "with invalid params" do

@@ -29,6 +29,7 @@ class CuratorsController < ApplicationController
 
     respond_to do |format|
       if @curator.save
+        Curatorship.create(curator: @curator, user: current_user, is_admin: true)
         format.html { redirect_to @curator, notice: 'Curator was successfully created.' }
         format.json { render :show, status: :created, location: @curator }
       else
