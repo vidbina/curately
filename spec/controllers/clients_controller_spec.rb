@@ -142,7 +142,6 @@ describe ClientsController do
 
         it "is always ignored" do
           put :update, {:id => client.to_param, :client => valid_attributes}, valid_session
-          #p "attr=#{valid_attributes} client=#{client.attributes}"
           p Ability.new(user).can? :update, client
           expect(response).to redirect_to(edit_client_url)
           #assert_response(403)
