@@ -40,6 +40,7 @@ gem 'composite_primary_keys', '~> 7.0.3'
 # gem 'debugger', group: [:development, :test]
 
 gem 'mongoid', '~> 4.0.0'
+gem 'objectid_columns'
 
 gem 'devise'
 gem 'cancan'
