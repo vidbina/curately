@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140719183555) do
+ActiveRecord::Schema.define(version: 20140720083737) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -27,21 +27,23 @@ ActiveRecord::Schema.define(version: 20140719183555) do
   add_index "accountants", ["shortname"], name: "index_accountants_on_shortname", unique: true, using: :btree
 
   create_table "clients", id: :uuid, default: "uuid_generate_v4()", force: true do |t|
-    t.string   "name",       null: false
-    t.string   "shortname",  null: false
+    t.string   "name",                      null: false
+    t.string   "shortname",                 null: false
     t.text     "data"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.uuid     "curator_id"
+    t.boolean  "is_active",  default: true
   end
 
   add_index "clients", ["shortname"], name: "index_clients_on_shortname", unique: true, using: :btree
 
   create_table "curators", id: :uuid, default: "uuid_generate_v4()", force: true do |t|
-    t.string   "name",       null: false
-    t.string   "shortname",  null: false
+    t.string   "name",                      null: false
+    t.string   "shortname",                 null: false
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.boolean  "is_active",  default: true
   end
 
   add_index "curators", ["shortname"], name: "index_curators_on_shortname", unique: true, using: :btree

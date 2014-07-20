@@ -73,7 +73,7 @@ describe Ability, :type => :model do
 
       describe "that has been disabled" do
         before do
-          curator.disabled = true
+          curator.is_active = false
           curator.save
         end
 
@@ -149,7 +149,7 @@ describe Ability, :type => :model do
 
       describe "that has been disabled" do
         before do
-          client.disabled = true
+          client.is_active = false
           client.save
         end
 
