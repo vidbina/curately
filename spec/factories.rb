@@ -17,10 +17,12 @@ FactoryGirl.define do
   factory :membership do
     user      { create(:user) }
     client    { create(:client) }
+    is_admin  { [true, false].sample }
   end
 
   factory :curatorship do
     user      { create(:user) }
     curator   { create(:curator) }
+    is_admin  { [true, false].sample }
   end
 end

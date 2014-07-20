@@ -4,14 +4,19 @@ describe Ability, :type => :model do
   let(:user) { create(:user) }
   let(:client) { create(:client) }
   let(:curator) { create(:curator) }
+  
+  before(:each) do
+    2.times { create(:curatorship, user: user, is_admin: true) }
+    9.times { create(:curatorship, user: user, is_admin: false) }
 
-  it "denied non-curators to modify clients" do
-    expect(Ability.new(user).can? :manage, curator).to be(false)
-    expect(Ability.new(user).can? :manage, create(:client, curator: curator)).to be(false)
+    5.times { create(:membership, user: user,  is_admin: true) }
+    4.times { create(:membership, user: user,  is_admin: false) }
   end
 
   describe "for curators" do
-    let(:curatorship) { create(:curatorship, user: user, curator: curator) }
+    let(:curatorship) { 
+      create(:curatorship, user: user, curator: curator, is_admin: false) 
+    }
 
     describe "to curate client" do
       it "does not exists for non-assigned client" do
@@ -19,8 +24,8 @@ describe Ability, :type => :model do
       end
 
       it "exists for assigned client" do
-        expect(curatorship).to be_persisted
-        expect(Ability.new(user).can? :curate, create(:client, curator: curator)).to be(true)
+        c = create(:client, curator: curatorship.curator)
+        expect(Ability.new(user).can? :curate, c).to be(true)
       end
     end
 
@@ -32,7 +37,7 @@ describe Ability, :type => :model do
       it "does not exists for administrative curators" do
         curatorship.is_admin = true
         curatorship.save
-        expect(Ability.new(user).can? :manage, client).to be(true)
+        expect(Ability.new(user).can? :manage, client).to be(false)
       end
     end
 
@@ -193,9 +198,14 @@ describe Ability, :type => :model do
       end
     end
 
-    describe "to manage clients" do
+    describe "to manage curators" do
       it "does not exist" do
         expect(Ability.new(user).can? :manage, curator).to be(false)
+      end
+    end
+
+    describe "to manage clients" do
+      it "does not exist" do
         expect(Ability.new(user).can? :manage, create(:client, curator: curator)).to be(false)
       end
     end
