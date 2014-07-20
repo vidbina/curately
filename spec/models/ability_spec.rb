@@ -89,7 +89,7 @@ describe Ability, :type => :model do
         it "is only reserved to administrators" do
           curatorship.is_admin = true
           curatorship.save
-          expect(Ability.new(user).can? :destroy, client).to be(true)
+          expect(Ability.new(user).can? :destroy, curator).to be(true)
         end
       end
     end
