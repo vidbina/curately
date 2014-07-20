@@ -1,5 +1,7 @@
 class ClientsController < ApplicationController
+  before_action :authenticate_user!
   before_action :set_client, only: [:show, :edit, :update, :destroy]
+  load_and_authorize_resource
 
   # GET /clients
   # GET /clients.json
@@ -28,6 +30,7 @@ class ClientsController < ApplicationController
 
     respond_to do |format|
       if @client.save
+        Membership.create(client: @client, user: current_user, is_admin: true)
         format.html { redirect_to @client, notice: 'Client was successfully created.' }
         format.json { render :show, status: :created, location: @client }
       else

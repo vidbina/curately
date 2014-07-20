@@ -1,8 +1,8 @@
-require 'spec_helper'
+require 'rails_helper'
 
-describe "accountants/show" do
+describe "curators/show" do
   before(:each) do
-    @accountant = assign(:accountant, stub_model(Accountant,
+    @curator = assign(:curator, stub_model(Curator,
       :name => "Name"
     ))
   end
@@ -10,6 +10,6 @@ describe "accountants/show" do
   it "renders attributes in <p>" do
     render
     # Run the generator again with the --webrat flag if you want to use webrat matchers
-    rendered.should match(/Name/)
+    expect(rendered).to match(/Name/)
   end
 end
