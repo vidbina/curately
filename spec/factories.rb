@@ -25,4 +25,13 @@ FactoryGirl.define do
     curator   { create(:curator) }
     is_admin  { [true, false].sample }
   end
+
+  factory :template do
+    name      { Faker::HipsterIpsum.word }
+  end
+
+  factory :element do
+    name      { Faker::HipsterIpsum.word }
+    template  { create(:template) }
+  end
 end
