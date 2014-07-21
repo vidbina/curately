@@ -1,14 +1,13 @@
 Rails.application.routes.draw do
+
   devise_for :users
 
-  resources :curators do
-    get  'template'       =>  'templates#show', as: :template
-    post 'template'       =>  'templates#create'
-    get  'template/new'   =>  'templates#new',  as: :new_template
-    get  'template/edit'  =>  'templates#edit', as: :edit_template
-    put  'template/update' => 'templates#update'
-  end
   resources :clients
+  resources :curators do
+    resource :template, controller: :templates do
+      resources :elements
+    end
+  end
 
   #resources :templates
 
