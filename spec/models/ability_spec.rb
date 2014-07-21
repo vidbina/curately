@@ -18,6 +18,16 @@ describe Ability, :type => :model do
       create(:curatorship, user: user, curator: curator, is_admin: false) 
     }
 
+    describe "to access create form" do
+      it "is available" do
+        expect(Ability.new(user).can? :new, Curator.new).to be(true)
+      end
+
+      it "is not available if not logged in" do
+        expect(Ability.new(User.new).can? :new, Curator.new).to be(true)
+      end
+    end
+
     describe "to curate client" do
       it "does not exists for non-assigned client" do
         expect(Ability.new(user).can? :curate, client).to be(false)
@@ -94,19 +104,29 @@ describe Ability, :type => :model do
       end
     end
 
+    describe "to access template creation form" do
+      it "is available" do
+        expect(Ability.new(user).can? :new, Template.new).to be(true)
+      end
+
+      it "is not available to non-signed in users" do
+        expect(Ability.new(User.new).can? :new, Template.new).to be(false)
+      end
+    end
+
     describe "to manage templates" do
       let(:template) { create(:template) }
 
       it "does not exist for non-owned templates" do
-        expect(curatorship.user).to be(user)
         expect(Ability.new(user).can? :manage, template).to be(false)
       end
 
       it "exists" do
-        curator.template = template
-        curator.save
+        expect(Ability.new(user).can? :manage, curator.template).to be(true)
+      end
 
-        expect(Ability.new(user).can? :manage, template).to be(true)
+      it "exists for new resource" do
+        expect(Ability.new(user).can? :manage, Template.new).to be(true)
       end
     end
   end
@@ -188,6 +208,10 @@ describe Ability, :type => :model do
   end
 
   describe "for anyone" do
+    it "to manage a template does not exist" do
+      expect(Ability.new(user).can? :manage, create(:template)).to be(false)
+    end
+
     describe "to create a client" do
       it "exists" do
         client = build(:client)
@@ -223,6 +247,20 @@ describe Ability, :type => :model do
     describe "to manage clients" do
       it "does not exist" do
         expect(Ability.new(user).can? :manage, create(:client, curator: curator)).to be(false)
+      end
+    end
+  end
+
+  describe "for guests" do
+    describe "to manage templates" do
+      it "is disabled" do
+        expect(Ability.new(User.new).can? :manage, Template.new).to be(false)
+      end
+    end
+
+    describe "to manage stored templates" do
+      it "is disabled" do
+        expect(Ability.new(User.new).can? :manage, curator.template).to be(false)
       end
     end
   end

@@ -1,8 +1,16 @@
 Rails.application.routes.draw do
   devise_for :users
 
-  resources :curators
+  resources :curators do
+    get  'template'       =>  'templates#show', as: :template
+    post 'template'       =>  'templates#create'
+    get  'template/new'   =>  'templates#new',  as: :new_template
+    get  'template/edit'  =>  'templates#edit', as: :edit_template
+    put  'template/update' => 'templates#update'
+  end
   resources :clients
+
+  #resources :templates
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".

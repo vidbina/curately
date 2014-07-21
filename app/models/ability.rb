@@ -11,8 +11,11 @@ class Ability
     end
 
     can :manage, Curator do |curator|
-      # TODO: don't make all curators managers
-      !user.curatorships.where(curator: curator, is_admin: true).empty?
+      if curator.new_record?
+        true
+      else
+        curator_admin(user, curator)
+      end
     end
 
     can :create, Client
@@ -36,17 +39,30 @@ class Ability
     end
 
     cannot :destroy, Curator do |curator|
-      unless curator.is_active == false
-        curator_admin(user, curator)
+      if user.new_record?
+        false
+      else
+        false
+        unless curator.is_active == false
+          curator_admin(user, curator)
+        end
       end
     end
 
     can :manage, Template do |template|
-      curator = Curator.all.where(template_id: template.id.to_binary).first
-      if curator
-        !curator.curatorships.empty?
-      else
+      if user.new_record?
         false
+      else
+        if template.new_record?
+          true
+        else
+          curator = Curator.all.where(template_id: template.id.to_binary).first
+          if curator
+            !curator.curatorships.empty?
+          else
+            false
+          end
+        end
       end
     end
   end

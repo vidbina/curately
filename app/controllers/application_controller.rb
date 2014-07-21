@@ -7,9 +7,17 @@ class ApplicationController < ActionController::Base
     render status: :forbidden, html: 'nope'
   end
 
+  rescue_from ActiveRecord::RecordNotFound, with: :record_not_found
+  rescue_from Mongoid::Errors::DocumentNotFound, with: :record_not_found
+
   before_filter do
     resource = controller_name.singularize.to_sym
     method = "#{resource}_params"
     params[resource] &&= send(method) if respond_to?(method, true)
+  end
+
+  protected
+  def record_not_found(exception)
+    render status: :not_found, html: 'not found'
   end
 end
