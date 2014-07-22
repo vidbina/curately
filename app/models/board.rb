@@ -10,6 +10,24 @@ class Board
     (curator.template.elements if curator && curator.template) or []
   end
 
+  def history
+    self[:content] or {}
+  end
+
+  def content
+    (self[:content][-1] if self[:content]) or {}
+  end
+
+  def content=(content)
+    data = content.select { |k, v| valid_element? k }.merge(_timestamp: get_stamp)
+
+    if self[:content] != nil
+      self[:content] << data # NOTE: could still crash if content isn't an array
+    else
+      self[:content] = [data]
+    end
+  end
+
   def curator
     if self[:curator][:id]
       Curator.find(self[:curator][:id])
@@ -37,11 +55,24 @@ class Board
   end
 
   private
+  def elements
+    (curator.template.elements if curator && curator.template) or []
+  end
+  alias :els :elements
+
+  def valid_element? (field)
+    !curator.template.elements.where(name: field.to_s).empty?
+  end
+
   def has_a_existing_curator
     errors.add(:base, 'The curator does not yet exist') unless Curator.exists? self[:curator][:id]
   end
 
   def has_a_existing_client
     errors.add(:base, 'The client does not yet exist') unless Client.exists? self[:client][:id]
+  end
+
+  def get_stamp
+    Time.now.strftime('%Y%m%d%H%M%S%L')
   end
 end
