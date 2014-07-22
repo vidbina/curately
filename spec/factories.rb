@@ -35,4 +35,9 @@ FactoryGirl.define do
     name      { Faker::HipsterIpsum.word }
     template  { create(:template) }
   end
+
+  factory :board do
+    curator   { create(:curator) }
+    client    { create(:client) }
+  end
 end
