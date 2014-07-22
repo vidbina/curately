@@ -24,4 +24,11 @@ describe Element do
   it "can be stored" do
     expect(create(:element)).to be_persisted
   end
+
+  it "can be updated" do
+    element = create(:element)
+    expect{
+      element.update_attributes!({name: 'Spock'})
+    }.to change(element, :name).to("Spock")
+  end
 end

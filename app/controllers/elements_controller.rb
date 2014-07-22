@@ -1,15 +1,14 @@
 class ElementsController < ApplicationController
-  #before_action :authenticate_user!
-  before_action :set_element #, only: [:show, :edit, :update, :destroy]
-  before_action :testthis
+  before_action :authenticate_user!
+  before_action :load_parents
+  before_action :set_element, only: [:show, :edit, :update, :destroy]
+  before_action :set_elements, only: [:index]
 
   load_and_authorize_resource :curator
   load_and_authorize_resource :template
   load_resource :element
 
   def index
-    p "INDEX" #{@template
-    @elements = [] # @template.elements
   end
 
   def show
@@ -23,11 +22,11 @@ class ElementsController < ApplicationController
   end
 
   def create
-    @element = Element.new(element_params)
+    @element = @template.elements.build(element_params)
 
     respond_to do |format|
       if @element.save
-        format.html { redirect_to @element, notice: 'Element was successfully created.' }
+        format.html { redirect_to curator_template_element_url(@curator.id, @element.id), notice: 'Element was successfully created.' }
         format.json { render :show, status: :created, location: @element }
       else
         format.html { render :new }
@@ -38,8 +37,8 @@ class ElementsController < ApplicationController
 
   def update
     respond_to do |format|
-      if @element.update(element_params)
-        format.html { redirect_to @element, notice: 'Element was successfully updated.' }
+      if @element.update_attributes!({name: 'Spock'})
+        format.html { redirect_to curator_template_element_url(@curator.id, @element.id), notice: 'Element was successfully updated.' }
         format.json { render :show, status: :ok, location: @element }
       else
         format.html { render :edit }
@@ -53,21 +52,20 @@ class ElementsController < ApplicationController
   end
 
   private
-  def set_element
-    #p "setting element"
+  def load_parents
     @curator = Curator.find(params[:curator_id])
     @template = @curator.template
-    p "template is #{@template}"
-    @element  = @template.elements.find(:id)
-    p "element is #{@element}"
   end
 
-  def testthis
-    p "testing"
+  def set_element
+    @element  = @template.elements.find(params[:id])
+  end
+
+  def set_elements
+    @elements = @template.elements
   end
 
   def element_params
-    p({ curator_id: params[:curator_id] }.merge params.require(:element).permit(:name))
-    { curator_id: params[:curator_id] }.merge params.require(:element).permit(:name)
+    params.require(:element).permit(:name)
   end
 end
