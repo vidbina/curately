@@ -50,6 +50,15 @@ describe Board, :type => :model do
     }.to change { board.reload.send(:elements).count }.by(3)
   end
 
+  it "returns element names upon request" do
+    curator = create(:curator)
+    board = create(:board, curator: curator)
+
+    create(:element, template: curator.template, name: 'first_field')
+    create(:element, template: curator.template, name: 'second_field')
+    expect(board.reload.send(:element_names)).to match_array(['first_field', 'second_field', Board::VERSION_ID])
+  end
+
   describe "with specified fields" do
     let(:curator) { create(:curator) }
 
@@ -60,6 +69,10 @@ describe Board, :type => :model do
 
     it "knows its allowed elements" do
       expect(create(:board, curator: curator).send(:elements)).to match(curator.template.elements)
+    end
+
+    it "is invalid when unknown elements are set" do
+      expect(build :board, curator: curator, content: { size: 12, ratio: 3, age: 5 }).to be_valid
     end
   
     it "stores the supplied content" do
@@ -92,7 +105,7 @@ describe Board, :type => :model do
     it "appends modifications with a timestamp" do
       board = create(:board, curator: curator, content: { size: 43 })
       board.content = { size: 44 }
-      expect(board.history.first).to include(:_timestamp)
+      expect(board.history.first).to include(Board::VERSION_ID)
     end
   end
 end
