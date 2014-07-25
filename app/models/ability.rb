@@ -65,6 +65,8 @@ class Ability
         end
       end
     end
+
+    can :manage, Board
   end
   
   private
