@@ -24,10 +24,7 @@ class Board
   def content=(details)
     return unless details
 
-    # NOTE: kind of obsolete as we already have a validation
-    data = details.select { |k, v| 
-      elements.map { |e| e.name }.include? k.to_s
-    }.merge(VERSION_ID => get_stamp)
+    data = details.merge(VERSION_ID => get_stamp)
 
     if self[:content] != nil
       self[:content] << data # NOTE: could still crash if content isn't an array

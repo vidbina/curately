@@ -72,19 +72,38 @@ describe Board, :type => :model do
     end
 
     it "is invalid when unknown elements are set" do
-      expect(build :board, curator: curator, content: { size: 12, ratio: 3, age: 5 }).to be_valid
+      expect(build :board, curator: curator, content: { 
+        size: 12, 
+        ratio: 3, 
+        age: 5 
+      }).to be_invalid
+    end
+
+    it "is not saved when unknown elements are set" do
+      attr = build(:board, curator: curator).attributes
+      attr = attr.merge(content: { 
+        size: 12, 
+        ratio: 3, 
+        age: 5 
+      })
+      # NOTE: can we somehow override the content attribute in a Mongoid object?
+      # currently it reflects the datastores version, but I need it to reflect
+      # the abstraction level's representation of the resource
+      expect(Board.create attr).not_to be_persisted
     end
   
     it "stores the supplied content" do
-      expect(create(:board, curator: curator, content: { size: 12, ratio: 0.5 }).content).to include(
-        size: 12
-      )
+      expect(create(:board, curator: curator, content: { 
+        size: 12, 
+        ratio: 0.5 
+      }).content).to include(size: 12)
     end
 
     it "ignores elements not included in the template" do
-      expect(create(:board, curator: curator, content: { size: 32, blah: 'ha' }).content).not_to include(
-        :blah
-      )
+      expect{create(:board, curator: curator, content: { 
+        size: 32, 
+        blah: 'ha' 
+      })}.to raise_error #.content).not_to include(:blah)
     end
 
     it "updates the supplied content" do
