@@ -12,6 +12,7 @@ FactoryGirl.define do
   factory :curator do
     name      { Faker::Company.name }
     shortname { "#{name.split(/,+|&+| +|'+|\-+/).join.downcase[0..14]}" }
+    template  { create(:template) }
   end
 
   factory :membership do
@@ -24,5 +25,19 @@ FactoryGirl.define do
     user      { create(:user) }
     curator   { create(:curator) }
     is_admin  { [true, false].sample }
+  end
+
+  factory :template do
+    name      { Faker::HipsterIpsum.word }
+  end
+
+  factory :element do
+    name      { Faker::HipsterIpsum.word }
+    template  { create(:template) }
+  end
+
+  factory :board do
+    curator   { create(:curator) }
+    client    { create(:client) }
   end
 end

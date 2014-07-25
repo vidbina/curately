@@ -6,4 +6,25 @@ class Curator < ActiveRecord::Base
 
   has_many :curatorships, dependent: :destroy
   has_many :clients
+
+  has_many :users, through: :curatorships
+
+  has_objectid_columns :template_id
+
+  def template
+    if(@template)
+      @template
+    else
+      @template = Template.find(template_id) unless template_id.nil?
+    end
+  end
+
+  def template=(template)
+    write_attribute(:template_id, template.id.to_binary)
+    @template = template
+  end
+
+  def save
+    super
+  end
 end

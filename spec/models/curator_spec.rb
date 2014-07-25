@@ -6,6 +6,8 @@ describe Curator do
     shortname: 'abctotaal',
   } }
 
+  let(:curator) { create(:curator) }
+
   before(:all) do
     Curator.destroy_all
   end
@@ -13,6 +15,22 @@ describe Curator do
   it "has a UUID" do
     curator = Curator.create!(valid_attributes)
     UUIDTools::UUID.parse(curator.id.to_s)
+  end
+
+  it "may have a template" do
+    expect(Curator.new).to respond_to(:template)
+  end
+
+  it "knows how to retrieve its related template" do
+    template = create(:template)
+    c = create(:curator, template: template)
+    expect(Curator.find(c.id).template).to eq(template)
+  end
+
+  it "knows its users" do
+    expect {
+      2.times { create(:curatorship, curator: curator) }
+    }.to change(curator.users, :count).by(2)
   end
 
   it "fails when shortname is already taken" do

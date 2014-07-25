@@ -1,8 +1,17 @@
 Rails.application.routes.draw do
+
+  resources :boards
+
   devise_for :users
 
-  resources :curators
   resources :clients
+  resources :curators do
+    resource :template, controller: :templates do
+      resources :elements
+    end
+  end
+
+  #resources :templates
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
