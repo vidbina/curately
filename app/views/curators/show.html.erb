@@ -1,9 +1,8 @@
+<h1><%= @curator.name %></h1>
 <p id="notice"><%= notice %></p>
+<p><strong>Name:</strong><%= @curator.name %></p>
+<p><strong>Shortname:</strong><%= @curator.shortname %></p>
+<% if @curator.template && can?(:read, @curator.template) %><p><strong>Template:</strong><%= link_to @curator.template.name, curator_template_path(@curator) %></p><% end %>
 
-<p>
-  <strong>Name:</strong>
-  <%= @curator.name %>
-</p>
-
-<%= link_to 'Edit', edit_curator_path(@curator) %> |
-<%= link_to 'Back', curators_path %>
+<hr />
+<%= edit_link @curator %> <%= link_to 'Back', curators_path %>
