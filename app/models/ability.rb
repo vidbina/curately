@@ -2,6 +2,8 @@ class Ability
   include CanCan::Ability
 
   def initialize(user)
+    user ||= User.new
+
     can :read, Client do |client|
       !user.memberships.where(client: client).empty?
     end
