@@ -3,9 +3,10 @@ require 'rails_helper'
 describe "curators/edit" do
   before(:each) do
     # NOTE: figure out the real difference between stub_model and factory_girl build
-    @curator = assign(:curator, stub_model(Curator,
-      :name => "MyString"
-    ))
+    @curator = assign(
+      :curator, 
+      stub_model(Curator, attributes_without_id(build(:curator)))
+    )
   end
 
   it "renders the edit curator form" do

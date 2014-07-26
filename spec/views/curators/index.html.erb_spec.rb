@@ -3,8 +3,8 @@ require 'rails_helper'
 describe "curators/index" do
   before(:each) do
     assign(:curators, [
-      build(:curator),
-      build(:curator)
+      stub_model(Curator, attributes_without_id(build(:curator))),
+      stub_model(Curator, attributes_without_id(build(:curator)))
     ])
   end
 
