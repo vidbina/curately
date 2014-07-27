@@ -20,7 +20,7 @@ class Update
   end
 
   def only_has_known_fields
-    attributes_without(['_id', 'elements'], self).each { |k|
+    attributes_without(['_id', 'elements', 'timestamp'], self).each { |k|
       errors.add(
         :base, 
         "#{k} is not a valid element"
