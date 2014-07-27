@@ -40,4 +40,8 @@ FactoryGirl.define do
     curator   { create(:curator) }
     client    { create(:client) }
   end
+
+  factory :update do
+    board     { create(:board) }
+  end
 end

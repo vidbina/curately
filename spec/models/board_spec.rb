@@ -71,12 +71,21 @@ describe Board, :type => :model do
       expect(create(:board, curator: curator).send(:elements)).to match(curator.template.elements)
     end
 
+    it "knows its updates" do
+      board = create(:board, curator: curator)
+      expect {
+        3.times {
+          board.updates.create(size: rand(10..100), ratio: rand(10..100))
+        }
+      }.to change(board.reload.updates, :count).by(3)
+    end
+
     it "is invalid when unknown elements are set" do
-      expect(build :board, curator: curator, content: { 
+      expect(build(:board, curator: curator, content: { 
         size: 12, 
         ratio: 3, 
         age: 5 
-      }).to be_invalid
+      })).to be_invalid
     end
 
     it "is not saved when unknown elements are set" do
