@@ -9,6 +9,8 @@ class Board
   validate :has_a_existing_client
   validate :has_permitted_elements
 
+  embeds_many :updates
+
   def elements
     (curator.template.elements if curator && curator.template) or []
   end
@@ -63,12 +65,8 @@ class Board
   end
 
   private
-  def elements
-    (curator.template.elements if curator && curator.template) or []
-  end
-
   def element_names
-    elements.map { |el| el.name } << VERSION_ID
+    elements.map { |el| el.key } << VERSION_ID
   end
 
   alias :els :elements

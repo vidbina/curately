@@ -31,4 +31,10 @@ describe Element do
       element.update_attributes!({name: 'Spock'})
     }.to change(element, :name).to("Spock")
   end
+
+  it "extracts a API fiendly key from the name" do
+    expect(create(:element, name: 'Something you need').key).to eq('something_you_need')
+    expect(create(:element, name: "Lucy's car").key).to eq('lucys_car')
+    expect(create(:element, name: "bigDataChallenge is here").key).to eq('big_data_challenge_is_here')
+  end
 end

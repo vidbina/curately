@@ -68,7 +68,13 @@ class Ability
       end
     end
 
-    can :manage, Board
+    can :manage, Board do |board|
+      if user.curatorships.where(curator: board.curator).empty?
+        false
+      else
+        true
+      end
+    end
   end
   
   private
