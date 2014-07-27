@@ -16,7 +16,7 @@ class Update
   def has_some_data
     errors.add(
       :base, 'At least one expected element needs to be set'
-    ) if valid_elements.select{ |el| !self[el.name.to_sym].nil? }.empty?
+    ) if valid_elements.select{ |el| !self[el.key.to_sym].nil? }.empty?
   end
 
   def only_has_known_fields
@@ -24,7 +24,7 @@ class Update
       errors.add(
         :base, 
         "#{k} is not a valid element"
-      ) unless valid_elements.map{ |element| element.name }.include? k.to_s
+      ) unless valid_elements.map{ |element| element.key }.include? k.to_s
     }
   end
 

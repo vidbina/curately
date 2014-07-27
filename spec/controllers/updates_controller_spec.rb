@@ -2,25 +2,26 @@ require 'rails_helper'
 
 describe UpdatesController, :type => :controller do
   let(:board) { create(:board) }
-  let(:curatorship) { create(curator: board.curator, user: create(:user)) }
+  let(:curatorship) { create(:curatorship, curator: board.curator, user: create(:user)) }
 
   let(:valid_attributes) {
     {
-      test_rate: rand(1..100),
-      description: Faker::HipsterIpsum.sentence,
+      'test_rate' => rand(1..100),
+      'description' => Faker::HipsterIpsum.sentence,
     }
   }
 
   before(:each) { 
-    board.curator.template.elements.create(name: 'test_rate')
-    board.curator.template.elements.create(name: 'description')
+    board.curator.template.elements.create(name: 'Test rate')
+    board.curator.template.elements.create(name: 'Description')
+    sign_in :user, curatorship.user
   }
 
 
   let(:invalid_attributes) {
     {
-      test_rate: rand(1..100),
-      nonexistent: 'blah'
+      'test_rate' => rand(1..100),
+      'nonexistent' => 'blah'
     }
   }
 

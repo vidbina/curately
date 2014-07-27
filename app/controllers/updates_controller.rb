@@ -1,10 +1,10 @@
 class UpdatesController < ApplicationController
-  #before_action :authenticate_user!
+  before_action :authenticate_user!
   before_action :load_parents
   before_action :set_update, only: [:show, :edit, :update, :destroy]
   before_action :set_updates, only: [:index]
 
-  #load_and_authorize_resource :board
+  load_and_authorize_resource :board
 
   def index
     @updates = @board.updates

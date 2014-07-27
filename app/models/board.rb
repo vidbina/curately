@@ -66,7 +66,7 @@ class Board
 
   private
   def element_names
-    elements.map { |el| el.name } << VERSION_ID
+    elements.map { |el| el.key } << VERSION_ID
   end
 
   alias :els :elements

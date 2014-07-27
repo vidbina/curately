@@ -4,9 +4,9 @@ describe Update do
   let(:board)   { create(:board) }
 
   before(:each) do
-    create(:element, template: board.curator.template, name: 'a')
-    create(:element, template: board.curator.template, name: 'b')
-    create(:element, template: board.curator.template, name: 'c')
+    create(:element, template: board.curator.template, name: 'First thing')
+    create(:element, template: board.curator.template, name: 'Second thing')
+    create(:element, template: board.curator.template, name: 'Third thing')
   end
 
   it "needs at least one field set to be valid" do
@@ -14,14 +14,14 @@ describe Update do
   end
 
   it "is invalid if a unknown field is set" do
-    expect(board.updates.new(d: 'hello', c: 'ha')).to be_invalid
+    expect(board.updates.new(fourth_thing: 'hello', third_thing: 'ha')).to be_invalid
   end
 
   it "is valid if some elements are set" do
-    expect(board.updates.new(a: 'test')).to be_valid
+    expect(board.updates.new(first_thing: 'test')).to be_valid
   end
 
   it "is persisted when valid" do
-    expect(board.updates.create(a: 12, b: 23)).to be_persisted
+    expect(board.updates.create(first_thing: 12, second_thing: 23)).to be_persisted
   end
 end

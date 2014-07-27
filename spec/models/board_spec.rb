@@ -54,8 +54,8 @@ describe Board, :type => :model do
     curator = create(:curator)
     board = create(:board, curator: curator)
 
-    create(:element, template: curator.template, name: 'first_field')
-    create(:element, template: curator.template, name: 'second_field')
+    create(:element, template: curator.template, name: 'First field')
+    create(:element, template: curator.template, name: 'Second field')
     expect(board.reload.send(:element_names)).to match_array(['first_field', 'second_field', Board::VERSION_ID])
   end
 
@@ -63,8 +63,8 @@ describe Board, :type => :model do
     let(:curator) { create(:curator) }
 
     before(:example) do
-      create(:element, name: 'size', template: curator.template)
-      create(:element, name: 'ratio', template: curator.template)
+      create(:element, name: 'Size', template: curator.template)
+      create(:element, name: 'Ratio', template: curator.template)
     end
 
     it "knows its allowed elements" do
@@ -78,62 +78,6 @@ describe Board, :type => :model do
           board.updates.create(size: rand(10..100), ratio: rand(10..100))
         }
       }.to change(board.reload.updates, :count).by(3)
-    end
-
-    it "is invalid when unknown elements are set" do
-      expect(build(:board, curator: curator, content: { 
-        size: 12, 
-        ratio: 3, 
-        age: 5 
-      })).to be_invalid
-    end
-
-    it "is not saved when unknown elements are set" do
-      attr = build(:board, curator: curator).attributes
-      attr = attr.merge(content: { 
-        size: 12, 
-        ratio: 3, 
-        age: 5 
-      })
-      # NOTE: can we somehow override the content attribute in a Mongoid object?
-      # currently it reflects the datastores version, but I need it to reflect
-      # the abstraction level's representation of the resource
-      expect(Board.create attr).not_to be_persisted
-    end
-  
-    it "stores the supplied content" do
-      expect(create(:board, curator: curator, content: { 
-        size: 12, 
-        ratio: 0.5 
-      }).content).to include(size: 12)
-    end
-
-    it "ignores elements not included in the template" do
-      expect{create(:board, curator: curator, content: { 
-        size: 32, 
-        blah: 'ha' 
-      })}.to raise_error #.content).not_to include(:blah)
-    end
-
-    it "updates the supplied content" do
-      board = create(:board, curator: curator, content: { size: 12 })
-      board.content = { size: 24 }
-      expect(board.content).to include(size: 24)
-    end
-
-    it "adds a new transaction upon update" do
-      board = create(:board, curator: curator, content: { size: 92 })
-      expect{ 
-        board.content = { size: 24 }
-      }.to change{ 
-        board.history.length 
-      }.by(1)
-    end
-  
-    it "appends modifications with a timestamp" do
-      board = create(:board, curator: curator, content: { size: 43 })
-      board.content = { size: 44 }
-      expect(board.history.first).to include(Board::VERSION_ID)
     end
   end
 end
