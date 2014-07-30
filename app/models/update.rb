@@ -5,12 +5,19 @@ class Update
   validate :has_some_data
   validate :only_has_known_fields
 
-  field :timestamp
+  field :time, type: DateTime
 
   embedded_in :board
 
   before_save :ensure_elements_are_stored
   before_save :set_time
+
+  def setup_element_methods
+    valid_elements.map { |el| el.key }.each { |element|
+      self.class.send(:define_method, element, ->{ self[element.to_sym] })
+      #self.class.send(:define_method, "#{element}=", { |value| self[element.to_sym] }
+    }
+  end
 
   private
   def has_some_data
@@ -20,7 +27,7 @@ class Update
   end
 
   def only_has_known_fields
-    attributes_without(['_id', 'elements', 'timestamp'], self).each { |k|
+    attributes_without(['_id', 'elements', 'time'], self).each { |k|
       errors.add(
         :base, 
         "#{k} is not a valid element"
@@ -37,7 +44,7 @@ class Update
   end
 
   def set_time
-    self[:timestamp] = Time.now.strftime('%Y%m%d%H%M%S%L')
+    self[:time] = DateTime.now # Time.now.strftime('%Y%m%d%H%M%S%L')
   end
 
   def valid_elements

@@ -1,4 +1,6 @@
 <p id="notice"><%= notice %></p>
 
-<%= link_to 'Edit', edit_update_path(@update) %> |
-<%= link_to 'Back', updates_path %>
+<time datetime="<%= @update.time.to_s %>"></time>
+
+<%= link_to 'Edit', edit_board_update_path(@board, @update) %> |
+<%= link_to 'Back', board_updates_path(@board) %>

@@ -15,9 +15,11 @@ class UpdatesController < ApplicationController
 
   def new
     @update = @board.updates.new
+    stub_update
   end
 
   def edit
+    stub_update
   end
 
   def create
@@ -62,6 +64,10 @@ class UpdatesController < ApplicationController
 
   def set_update
     @update = @board.updates.find(params[:id])
+  end
+
+  def stub_update
+    @update.setup_element_methods
   end
 
   def set_updates

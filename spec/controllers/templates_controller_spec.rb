@@ -5,6 +5,7 @@ describe TemplatesController, :type => :controller do
   #let(:template) { create(:template) }
   let(:valid_session) { {} }
   let(:valid_attributes) { build(:template).attributes }
+  let(:invalid_attributes) { build(:template, name: nil).attributes }
   let(:user) { create(:user) }
   let(:curatorship) { create(:curatorship, user: user) }
 
@@ -70,12 +71,8 @@ describe TemplatesController, :type => :controller do
       end
 
       it "assigns a new template as @template" do
-        #p "#{curatorship.curator.template.id} #{template.id}"
-        #p "in #{curatorship.curator.template.attributes}"
-        #p "template #{template.attributes}"
         curatorship.curator.template.destroy
         get :new, { curator_id: curatorship.curator.id }, valid_session
-        p# "#{request.url} #{response.status}"
         expect(assigns(:template)).to be_a_new(Template)
       end
 
@@ -90,7 +87,6 @@ describe TemplatesController, :type => :controller do
     it "is not accessible if not logged in" do
       skip
       get :edit, { curator_id: curatorship.curator.id }, valid_session
-      #p "#{request.url} #{response.status}"
       assert_response 401
     end
 
@@ -99,15 +95,14 @@ describe TemplatesController, :type => :controller do
       get :edit, { curator_id: curatorship.curator.id }, valid_session
       assert_response 403
     end
-#
-#    describe "by non-admin" do
-#      before(:example) do
-#        curatorship.is_admin = false
-#        curatorship.save
-#        sign_in :user, user
-#        p "sign in admin"
-#      end
-#    end
+
+    describe "by non-admin" do
+      before(:example) do
+        curatorship.is_admin = false
+        curatorship.save
+        sign_in :user, user
+      end
+    end
 
     describe "by curator admin" do
       before(:example) do

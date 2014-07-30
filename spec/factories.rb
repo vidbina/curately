@@ -43,5 +43,6 @@ FactoryGirl.define do
 
   factory :update do
     board     { create(:board) }
+    time      { DateTime.now }
   end
 end

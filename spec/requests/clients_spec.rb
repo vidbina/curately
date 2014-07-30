@@ -2,7 +2,7 @@ require 'rails_helper'
 
 describe "Clients" do
   before(:all) do
-    Client.destroy
+    Client.destroy_all
   end
 
   describe "GET /clients" do

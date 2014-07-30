@@ -5,9 +5,9 @@ class Board
 
   field :content
 
-  validate :has_a_existing_curator
-  validate :has_a_existing_client
-  validate :has_permitted_elements
+  validate :has_existing_curator
+  validate :has_existing_client
+  #validate :has_permitted_elements
 
   embeds_many :updates
 
@@ -15,25 +15,25 @@ class Board
     (curator.template.elements if curator && curator.template) or []
   end
 
-  def history
-    self[:content] or {}
-  end
-
-  def content
-    (self[:content][-1] if self[:content]) or {}
-  end
-
-  def content=(details)
-    return unless details
-
-    data = details.merge(VERSION_ID => get_stamp)
-
-    if self[:content] != nil
-      self[:content] << data # NOTE: could still crash if content isn't an array
-    else
-      self[:content] = [data]
-    end
-  end
+#  def history
+#    self[:content] or {}
+#  end
+#
+#  def content
+#    (self[:content][-1] if self[:content]) or {}
+#  end
+#
+#  def content=(details)
+#    return unless details
+#
+#    data = details.merge(VERSION_ID => get_stamp)
+#
+#    if self[:content] != nil
+#      self[:content] << data # NOTE: could still crash if content isn't an array
+#    else
+#      self[:content] = [data]
+#    end
+#  end
 
   def curator
     if self[:curator] && self[:curator][:id]
@@ -42,12 +42,8 @@ class Board
   end
 
   def curator=(curator)
-    #p "setting for curator #{curator}"
     curator = Curator.find(curator[:id]) if curator.is_a? Hash
-    self[:curator] = {
-      id: curator.id,
-      name: curator.name
-    } unless curator.nil?
+    self[:curator] = (({ id: curator.id, name: curator.name } if curator) or {})
   end
 
   def client
@@ -58,10 +54,7 @@ class Board
 
   def client=(client)
     client = Client.find(client[:id]) if client.is_a? Hash
-    self[:client] = {
-      id: client.id,
-      name: client.name
-    } unless client.nil?
+    self[:client] = (({ id: client.id, name: client.name } if client) or {})
   end
 
   private
@@ -75,27 +68,27 @@ class Board
     !curator.template.elements.where(name: field.to_s).empty?
   end
 
-  def has_a_existing_curator
+  def has_existing_curator
     errors.add(
       :base, 'The curator does not yet exist'
     ) unless (self[:curator] && Curator.exists?(self[:curator][:id]))
   end
 
-  def has_a_existing_client
+  def has_existing_client
     errors.add(
       :base, 'The client does not yet exist'
     ) unless (self[:client] && Client.exists?(self[:client][:id]))
   end
 
-  def has_permitted_elements
-    content.keys.each do |el|
-      next if el.to_sym == VERSION_ID.to_sym
-      errors.add(
-        :base, "#{el} is not a valid element"
-      ) if !element_names.include? el.to_s
-    end
-  end
-
+#  def has_permitted_elements
+#    content.keys.each do |el|
+#      next if el.to_sym == VERSION_ID.to_sym
+#      errors.add(
+#        :base, "#{el} is not a valid element"
+#      ) if !element_names.include? el.to_s
+#    end
+#  end
+#
   def get_stamp
     Time.now.strftime('%Y%m%d%H%M%S%L')
   end

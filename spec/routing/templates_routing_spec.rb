@@ -2,33 +2,30 @@ require "rails_helper"
 
 describe TemplatesController do
   describe "routing" do
-
-    it "routes to #index" do
-      expect(get: "/templates").to route_to("templates#index")
-    end
+    let(:curator_id) { "123" }
 
     it "routes to #new" do
-      expect(get: "/templates/new").to route_to("templates#new")
+      expect(get: "/curators/#{curator_id}/template/new").to route_to("templates#new", curator_id: curator_id)
     end
 
     it "routes to #show" do
-      expect(get: "/templates/1").to route_to("templates#show", :id => "1")
+      expect(get: "/curators/#{curator_id}/template").to route_to("templates#show", curator_id: curator_id)
     end
 
     it "routes to #edit" do
-      expect(get: "/templates/1/edit").to route_to("templates#edit", :id => "1")
+      expect(get: "/curators/#{curator_id}/template/edit").to route_to("templates#edit", curator_id: curator_id)
     end
 
     it "routes to #create" do
-      expect(post: "/templates").to route_to("templates#create")
+      expect(post: "/curators/#{curator_id}/template").to route_to("templates#create", curator_id: curator_id)
     end
 
     it "routes to #update" do
-      expect(put: "/templates/1").to route_to("templates#update", :id => "1")
+      expect(put: "/curators/#{curator_id}/template").to route_to("templates#update", curator_id: curator_id)
     end
 
     it "routes to #destroy" do
-      expect(delete: "/templates/1").to route_to("templates#destroy", :id => "1")
+      expect(delete: "/curators/#{curator_id}/template").to route_to("templates#destroy", curator_id: curator_id)
     end
 
   end

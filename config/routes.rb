@@ -2,7 +2,7 @@ Rails.application.routes.draw do
 
   devise_for :users
 
-  resources :boards do
+  resources :boards, only: [:index, :show, :new, :edit, :create, :update, :destroy] do
     resources :updates
   end
 

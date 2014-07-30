@@ -13,6 +13,16 @@ describe Board, :type => :model do
     }.to raise_error
   end
 
+  it "rejects an update without a client" do
+    board = create(:board)
+    expect(board.update(client: nil)).to be(false)
+  end
+
+  it "rejects an update without a curator" do
+    board = create(:board)
+    expect(board.update(curator: nil)).to be(false)
+  end
+
   it "is saved as long as it has a client and curator" do
     expect {
       board = create(:board)

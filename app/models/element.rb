@@ -11,6 +11,11 @@ class Element
   before_save :set_key
   before_validation :set_key
 
+  def key
+    set_key unless self[:key]
+    self[:key]
+  end
+
   private
   def set_key
     self[:key] = name.underscore.split.join('_').gsub(/[\W]+/, '') if name

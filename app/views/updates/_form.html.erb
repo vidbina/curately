@@ -1,4 +1,4 @@
-<%= form_for(@update) do |f| %>
+<%= form_for([@board, @update]) do |f| %>
   <% if @update.errors.any? %>
     <div id="error_explanation">
       <h2><%= pluralize(@update.errors.count, "error") %> prohibited this update from being saved:</h2>
@@ -8,6 +8,13 @@
         <li><%= message %></li>
       <% end %>
       </ul>
+    </div>
+  <% end %>
+
+  <% @board.elements.each do |element| %>
+    <div class="field">
+      <%= f.label element.key, element.name %><br>
+      <%= f.text_field element.key %>
     </div>
   <% end %>
 

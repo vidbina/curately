@@ -18,24 +18,13 @@ describe BoardsController, :type => :controller do
     {
       curator: { id: curator.id, name: curator.name },
       client: { id: client.id, name: client.name },
-      content: {
-        revenue: 100,
-        costs: 90,
-        profit: 10
-      }
     }
   }
 
   let(:invalid_attributes) {
     {
       curator: { id: curator.id, name: curator.name },
-      client: { id: client.id, name: client.name },
-      content: {
-        revenue: 100,
-        costs: 90,
-        profit: 10,
-        loss: 0
-      }
+      client: { name: client.name },
     }
   }
 
@@ -64,7 +53,6 @@ describe BoardsController, :type => :controller do
 
   describe "GET edit" do
     it "assigns the requested board as @board" do
-      #p "VALID ATTR IS #{valid_attributes}"
       get :edit, {:id => board.to_param}, valid_session
       expect(assigns(:board)).to eq(board)
     end
