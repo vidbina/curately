@@ -13,16 +13,17 @@ RSpec.describe "Boards", :type => :request do
   end
 
   describe "GET /boards" do
-    it "rejects unauthorized commands" do
-      get boards_path
-      expect(response.status).to be(403)
+    it "is unauthorized when credentials are missing" do
+      get boards_path, { format: 'json' }
+      expect(response.status).to be(401)
     end
 
     it "returns the boards when authorized" do
+      3.times { create(:board) }
       get boards_path, { format: 'json' }, {
         'Authorization' => basic_auth(user.email, user.password)
       }
-      expect(response.status).to be(200)
+      expect(JSON.parse(response.body).length).to eq(3)
     end
   end
 end
