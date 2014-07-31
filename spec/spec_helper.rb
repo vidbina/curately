@@ -7,3 +7,7 @@ def attributes_without(keys, object)
     !keys.map { |key| key.to_s }.include?(k.to_s)
   }
 end
+
+def basic_auth(user, password)
+  ActionController::HttpAuthentication::Basic.encode_credentials user, password
+end
