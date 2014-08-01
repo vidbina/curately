@@ -12,14 +12,6 @@ class Ability
       curator_admin(user, client.curator) || member_admin(user, client)
     end
 
-    can :manage, Curator do |curator|
-      if curator.new_record?
-        true
-      else
-        curator_admin(user, curator)
-      end
-    end
-
     can :create, Client
 
     can :update, Client do |client|
@@ -37,6 +29,14 @@ class Ability
     cannot :destroy, Client do |client|
       unless client.is_active == false
         member_admin(user, client)
+      end
+    end
+
+    can :manage, Curator do |curator|
+      if curator.new_record?
+        true
+      else
+        curator_admin(user, curator)
       end
     end
 
@@ -68,12 +68,28 @@ class Ability
       end
     end
 
+    can :read, Board do |board|
+      is_not_member = user.memberships.where(client: board.client).empty?
+      is_not_curator = user.curatorships.where(curator: board.curator).empty?
+
+      false
+      true unless (is_not_member and is_not_curator)
+    end
+
     can :manage, Board do |board|
       if user.curatorships.where(curator: board.curator).empty?
         false
       else
         true
       end
+    end
+
+    can :read, Update do |update|
+      false or true if can? :read, update.board
+    end
+
+    can :manage, Update do |update|
+      false or (true if can? :manage, update.board)
     end
   end
   
