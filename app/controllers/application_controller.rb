@@ -16,6 +16,14 @@ class ApplicationController < ActionController::Base
     params[resource] &&= send(method) if respond_to?(method, true)
   end
 
+  def http_authenticate
+    p 'here'
+    authenticate_or_request_with_http_digest do |handle, secret|
+      p 'handling update'
+      true
+    end
+  end
+
   protected
   def record_not_found(exception)
     render status: :not_found, html: 'not found'

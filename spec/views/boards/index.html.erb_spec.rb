@@ -3,12 +3,13 @@ require 'rails_helper'
 RSpec.describe "boards/index", :type => :view do
   before(:each) do
     assign(:boards, [
-      Board.create!(),
-      Board.create!()
+      create(:board),
+      create(:board)
     ])
   end
 
   it "renders a list of boards" do
+    skip
     render
   end
 end

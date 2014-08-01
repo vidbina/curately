@@ -3,18 +3,13 @@ require 'rails_helper'
 describe "curators/index" do
   before(:each) do
     assign(:curators, [
-      stub_model(Curator,
-        :name => "Name"
-      ),
-      stub_model(Curator,
-        :name => "Name"
-      )
+      stub_model(Curator, attributes_without_id(build(:curator))),
+      stub_model(Curator, attributes_without_id(build(:curator)))
     ])
   end
 
   it "renders a list of curators" do
     render
-    # Run the generator again with the --webrat flag if you want to use webrat matchers
-    assert_select "tr>td", :text => "Name".to_s, :count => 2
+    assert_select "ul#curators>li", :count => 2
   end
 end

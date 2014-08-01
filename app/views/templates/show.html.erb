@@ -1,9 +1,6 @@
+<h1>Template: <%= @template.name %>
 <p id="notice"><%= notice %></p>
+<h2>Elements</h2>
+<%= link_to 'show available elements for this template', curator_template_elements_path(@curator) %>
 
-<p>
-  <strong>Name:</strong>
-  <%= @template.name %>
-</p>
-
-<%= link_to 'Edit', curator_edit_template_path(@template) %> |
-<%= link_to 'Back', curator_template_path %>
+<%= edit_link edit_curator_template_path(@curator) %> <%= link_to 'Back', curator_path(@curator) %>

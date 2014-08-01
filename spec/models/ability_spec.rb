@@ -37,6 +37,27 @@ describe Ability, :type => :model do
         c = create(:client, curator: curatorship.curator)
         expect(Ability.new(user).can? :curate, c).to be(true)
       end
+      
+      it "allows for the creation of updates" do
+        c = create(:client, curator: curatorship.curator)
+        board = build(:board, curator: curatorship.curator, client: c)
+        update = board.updates.build
+        expect(Ability.new(user).can? :create, update).to be(true)
+      end
+      
+      it "allows for the modification of updates" do
+        c = create(:client, curator: curatorship.curator)
+        board = create(:board, curator: curatorship.curator, client: c)
+        update = board.updates.create(build(:update).attributes)
+        expect(Ability.new(user).can? :update, update).to be(true)
+      end
+      
+      it "allows for the removal of updates" do
+        c = create(:client, curator: curatorship.curator)
+        board = create(:board, curator: curatorship.curator, client: c)
+        update = board.updates.create(build(:update).attributes)
+        expect(Ability.new(user).can? :destroy, update).to be(true)
+      end
     end
 
     describe "to manage clients" do
@@ -204,6 +225,45 @@ describe Ability, :type => :model do
           expect(Ability.new(user).can? :destroy, client).to be(true)
         end
       end
+    end
+
+    it "denies the viewing of non-owned boards" do
+      board = create(:board)
+      expect(Ability.new(user).can? :read, board).to be(false)
+    end
+
+    it "allows for the viewing of its boards" do
+      board = create(:board, client: membership.client)
+      expect(Ability.new(user).can? :read, board).to be(true)
+    end
+    
+    it "allows for the viewing of updates" do
+      board = create(:board, client: membership.client)
+      update = board.updates.create(build(:update).attributes)
+      expect(Ability.new(user).can? :read, update).to be(true)
+    end
+
+    it "denies the management of boards" do
+      board = create(:board, client: membership.client)
+      expect(Ability.new(user).can? :manage, board).to be(false)
+    end
+    
+    it "denies the updating of updates" do
+      board = create(:board, client: membership.client)
+      update = board.updates.create(build(:update).attributes)
+      expect(Ability.new(user).can? :update, update).to be(false)
+    end
+    
+    it "denies the removal of updates" do
+      board = create(:board, client: membership.client)
+      update = board.updates.create(build(:update).attributes)
+      expect(Ability.new(user).can? :destroy, update).to be(false)
+    end
+    
+    it "denies the creation of updates" do
+      board = create(:board, client: membership.client)
+      update = board.updates.build(build(:update).attributes)
+      expect(Ability.new(user).can? :create, update).to be(false)
     end
   end
 

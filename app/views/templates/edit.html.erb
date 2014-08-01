@@ -2,5 +2,5 @@
 
 <%= render 'form' %>
 
-<%= link_to 'Show', @template %> |
-<%= link_to 'Back', curator_template_path %>
+<%= link_to 'Show', curator_template_path(@curator) %> |
+<%= link_to 'Back to curator', curator_path(@curator) %>

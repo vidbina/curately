@@ -1,0 +1,9 @@
+<h1>Listing updates</h1>
+
+<ul id="updates">
+  <% @updates.each do |update| %>
+    <li><%= link_to update.time, board_update_path(@board, update) %> <%= edit_link board_update_path(@board, update) %></li>
+  <% end %>
+</ul>
+
+<%= new_link new_board_update_path(@board) %>

@@ -2,9 +2,10 @@ require 'rails_helper'
 
 describe "curators/new" do
   before(:each) do
-    assign(:curator, stub_model(Curator,
-      :name => "MyString"
-    ).as_new_record)
+    assign(
+      :curator, 
+      stub_model(Curator, attributes_without_id(build(:curator))).as_new_record
+    )
   end
 
   it "renders new curator form" do

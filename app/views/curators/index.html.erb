@@ -1,25 +1,9 @@
-<h1>Listing curators</h1>
+<h1>Curators</h1>
 
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th colspan="3"></th>
-    </tr>
-  </thead>
+<ul id="curators">
+  <% @curators.each do |curator| %>
+    <li><%= link_to curator.name, curator %> <%= edit_link curator %></li>
+  <% end %>
+</ul>
 
-  <tbody>
-    <% @curators.each do |curator| %>
-      <tr>
-        <td><%= curator.name %></td>
-        <td><%= link_to 'Show', curator %></td>
-        <td><%= link_to 'Edit', edit_curator_path(curator) %></td>
-        <td><%= link_to 'Destroy', curator, method: :delete, data: { confirm: 'Are you sure?' } %></td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
-
-<br>
-
-<%= link_to 'New Accountant', new_curator_path %>
+<%= new_link Curator %>
