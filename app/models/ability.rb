@@ -69,23 +69,20 @@ class Ability
     end
 
     can :read, Board do |board|
-      is_not_member = user.memberships.where(client: board.client).empty?
-      is_not_curator = user.curatorships.where(curator: board.curator).empty?
+      is_member = !user.memberships.where(client: board.client).empty?
+      is_curator = !user.curatorships.where(curator: board.curator).empty?
 
       false
-      true unless (is_not_member and is_not_curator)
+      true if (is_member or is_curator)
     end
 
     can :manage, Board do |board|
-      if user.curatorships.where(curator: board.curator).empty?
-        false
-      else
-        true
-      end
+      is_curator = !user.curatorships.where(curator: board.curator).empty?
+      false or true if is_curator
     end
 
     can :read, Update do |update|
-      false or true if can? :read, update.board
+      false or (true if can? :read, update.board)
     end
 
     can :manage, Update do |update|
