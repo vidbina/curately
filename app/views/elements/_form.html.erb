@@ -1,0 +1,25 @@
+<%#= form_for([@curator, @template, @element]) do |f| %>
+<%= form_for(@element, url: @element.new_record? ? curator_template_elements_path(curator_id: @curator) : curator_template_element_path(curator_id: @curator.id, id: @element.id)) do |f| %>
+  <% @element.attributes.each do |k, v| %>
+    (<%= k %> <% v %>)
+  <% end %>
+  <% if @element.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@element.errors.count, "error") %> prohibited this element from being saved:</h2>
+
+      <ul>
+      <% @element.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= f.label :name %><br>
+    <%= f.text_field :name %>
+  </div>
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>

@@ -1,1 +1,6 @@
-<h1>Elements#edit</h1>
+<h1>Edit Element</h1>
+
+<%= render 'form' %>
+
+<%= link_to 'Show', curator_template_element_path(curator_id: @curator, id: @element.id) %>
+<%= link_to 'Back', curator_template_path(curator_id: @curator) %>

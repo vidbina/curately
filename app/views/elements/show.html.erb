@@ -1,1 +1,6 @@
-<h1>Elements#show</h1>
+<h1><%= @element.name %></h1>
+<p id="notice"><%= notice %></p>
+<p><strong>Name:</strong><%= @element.name %></p>
+
+<hr />
+<%= edit_link @element %> <%= link_to 'Back', curator_template_elements_path(curator_id: @curator.id, id: @element.id) %>
