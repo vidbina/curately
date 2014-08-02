@@ -1,10 +1,6 @@
 require 'rails_helper'
 
 describe "curators/show" do
-  before(:context) do
-    Template.destroy_all
-  end
-
   before(:each) do
     @curator = assign(
       :curator, 
