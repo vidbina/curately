@@ -1,15 +1,27 @@
 require 'rails_helper'
 
-RSpec.describe "boards/index", :type => :view do
+describe "boards/index", :type => :view do
   before(:each) do
-    assign(:boards, [
-      create(:board),
-      create(:board)
+    @boards = assign(:boards, [
+      stub_model(Board, attributes_without_id(build(:board))),
+      stub_model(Board, attributes_without_id(build(:board)))
     ])
+    render
   end
 
   it "renders a list of boards" do
-    skip
-    render
+    assert_select "ul#boards > li", count: 2
+  end
+
+  it "names the curator for each board" do
+    expect(rendered).to include(*@boards.map { |b| "".html_safe << "by #{b.curator.name}" })
+  end
+
+  it "names the client for each board" do
+    expect(rendered).to include(*(@boards.map { |b| "".html_safe << "#{b.client.name}'s" }))
+  end
+
+  it "names the template for each board" do
+    expect(rendered).to include(*@boards.map { |b| "".html_safe << "#{b.curator.template.name}" })
   end
 end

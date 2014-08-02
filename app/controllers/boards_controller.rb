@@ -7,7 +7,11 @@ class BoardsController < ApplicationController
   # GET /boards
   # GET /boards.json
   def index
-    @boards = Board.all
+    curator_ids = current_user.curatorships.map { |c| c.curator.id }
+    client_ids = current_user.memberships.map { |c| c.client.id }
+    curated_boards = Board.in('curator.id' => curator_ids)
+    subscribed_boards = Board.in('client.id' => client_ids)
+    @boards = Board.or(curated_boards.selector, subscribed_boards.selector)
   end
 
   # GET /boards/1
