@@ -4,7 +4,9 @@ describe BoardsController, :type => :controller do
   let(:curator) { create(:curator) }
   let(:client) { create(:client) }
   let(:board) { create(:board, curator: curator, client: client) }
-  let(:curatorship) { create(:curatorship, user: create(:user), curator: curator, is_admin: true) }
+  let(:user) { create(:user) }
+  let(:curatorship) { create(:curatorship, user: user, curator: curator) }
+  let(:membership) { create(:membership, user: user, client: client) }
 
   before(:each) {
     Board.destroy_all
@@ -31,9 +33,18 @@ describe BoardsController, :type => :controller do
   let(:valid_session) { {} }
 
   describe "GET index" do
-    it "assigns all boards as @boards" do
+    it "assigns membership and curatorship boards as @boards" do
+      1.times {
+        create(:board)
+      }
+      2.times {
+        create(:board, client: membership.client)
+      }
+      3.times {
+        create(:board, curator: curatorship.curator)
+      }
       get :index, {}, valid_session
-      expect(assigns(:boards)).to eq([board])
+      expect(assigns(:boards).count).to eq(5)
     end
   end
 

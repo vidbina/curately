@@ -1,1 +1,6 @@
-<h1>Elements#index</h1>
+<h1>Elements</h1>
+<ul id="elements">
+  <% @elements.each do |element| %>
+    <li><%= link_to element.name, element %></li>
+  <% end %>
+</ul>

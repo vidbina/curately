@@ -2,6 +2,7 @@ require 'rails_helper'
 
 describe "boards/edit", :type => :view do
   before(:each) do
+    # TODO: stub models
     @board = create(:board)
     create(:element, name: 'metric1', template: @board.curator.template)
     create(:element, name: 'metric2', template: @board.curator.template)

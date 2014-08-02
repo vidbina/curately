@@ -9,6 +9,6 @@ describe "templates/show", :type => :view do
   it "renders the template name" do
     render
 
-    expect(rendered).to include @template.name
+    expect(rendered).to include("".html_safe << @template.name)
   end
 end

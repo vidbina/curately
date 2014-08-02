@@ -8,8 +8,7 @@ describe "updates/new", :type => :view do
       stub_model(Element, attributes_without_id(build(:element, name: 'The hustle'))),
     ]
     allow(@board).to receive(:elements).and_return(elements)
-    @update = @board.updates.new()
-    assign(:update, @update)
+    @update = assign(:update, @board.updates.new())
     @update.setup_element_methods
   end
 

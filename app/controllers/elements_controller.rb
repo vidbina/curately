@@ -15,7 +15,7 @@ class ElementsController < ApplicationController
   end
 
   def new
-    @element = Element.new
+    @element = @template.elements.new
   end
 
   def edit
@@ -49,6 +49,10 @@ class ElementsController < ApplicationController
 
   def destroy
     @element.destroy
+    respond_to do |format|
+      format.html { redirect_to curator_template_elements_url(@curator), notice: 'Board was successfully destroyed.' }
+      format.json { head :no_content }
+    end
   end
 
   private
