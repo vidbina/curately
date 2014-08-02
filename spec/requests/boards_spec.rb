@@ -19,11 +19,15 @@ RSpec.describe "Boards", :type => :request do
     end
 
     it "returns the boards when authorized" do
-      3.times { create(:board) }
+      curatorship = create(:curatorship, user: user)
+      membership = create(:membership, user: user)
+      3.times { create(:board, curator: curatorship.curator) }
+      2.times { create(:board, client: membership.client) }
+      4.times { create(:board) }
       get boards_path, { format: 'json' }, {
         'Authorization' => basic_auth(user.email, user.password)
       }
-      expect(JSON.parse(response.body).length).to eq(3)
+      expect(JSON.parse(response.body).length).to eq(5)
     end
   end
 end
