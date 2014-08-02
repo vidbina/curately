@@ -15,7 +15,7 @@ class ElementsController < ApplicationController
   end
 
   def new
-    @element = Element.new
+    @element = @template.elements.new
   end
 
   def edit

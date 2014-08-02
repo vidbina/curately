@@ -8,6 +8,6 @@ describe "elements/show.html.erb", :type => :view do
 
   it "displays the element's name" do
     render
-    expect(rendered).to include(@element.name)
+    expect(rendered).to include("".html_safe << @element.name)
   end
 end
