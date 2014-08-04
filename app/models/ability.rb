@@ -51,6 +51,10 @@ class Ability
       false or (can?(:manage, template.curator) if template.curator)
     end
 
+    can :read, Template do |template|
+      (is_curator_of? template.curator) if template.curator
+    end
+
     can :create, Template do |template|
       (is_curator_of? template.curator, is_admin: true) if template.curator
     end

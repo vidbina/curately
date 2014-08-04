@@ -11,6 +11,7 @@ describe Ability, :type => :model do
   let(:admin_keeper) { create(:user) }
 
   let(:client) { create(:client) }
+  let(:inactive_client) { client.update(is_active: false) and client }
   let(:curator) { create(:curator) }
   let(:board) { create(:board, curator: curator, client: client) }
   let(:update) { board.updates.create(attributes_without_id(build(:update))) }
@@ -34,31 +35,43 @@ describe Ability, :type => :model do
 
   subject { Ability.new(user) }
 
+  shared_examples "accessing foreign resources" do
+    let(:foreign_board) { create(:board) }
+    it { is_expected.not_to be_able_to(:read, board) }
+  end
+  
   shared_examples "subscriber clearance" do
     it { is_expected.to be_able_to(:read, client) }
     it { is_expected.to be_able_to(:read, board) }
     it { is_expected.to be_able_to(:read, update) }
   end
 
+  shared_examples "non-curative clearance" do
+    let(:new_update) { 
+      board.updates.build(attributes_without_id(build(:update))) 
+    }
+    it { is_expected.not_to be_able_to(:update, board) }
+    it { is_expected.not_to be_able_to(:destroy, board) }
+    it { is_expected.not_to be_able_to(:create, new_update) }
+    it { is_expected.not_to be_able_to(:update, update) }
+    it { is_expected.not_to be_able_to(:destroy, update) }
+  end
+
   context "for member" do
     subject { Ability.new(member) }
     it_behaves_like "subscriber clearance"
+    it_behaves_like "non-curative clearance"
     it { is_expected.not_to be_able_to(:update, client) }
-    #it { is_expected.not_to be_able_to(:deactivate, client) }
     it { is_expected.not_to be_able_to(:destroy, client) }
 
     context "with administrative privileges" do
       subject { Ability.new(admin_member) }
       it_behaves_like "subscriber clearance"
+      it_behaves_like "non-curative clearance"
       it { is_expected.not_to be_able_to(:curate, client) }
       it { is_expected.to be_able_to(:update, client) }
       it { is_expected.not_to be_able_to(:destroy, client) }
-      #it { is_expected.to be_able_to(:deactivate, client) }
-      it { 
-        client.is_active = false
-        client.save
-        is_expected.to be_able_to(:destroy, client) 
-      }
+      it { is_expected.to be_able_to(:destroy, inactive_client) }
     end
   end
 
@@ -76,12 +89,11 @@ describe Ability, :type => :model do
     it_behaves_like "curator clearance"
     it { is_expected.not_to be_able_to(:manage, client) }
     it { is_expected.not_to be_able_to(:manage, curator) }
-    #it { is_expected.not_to be_able_to(:deactivate, curator) }
     it { is_expected.not_to be_able_to(:destroy, curator) }
 
+    it { is_expected.to be_able_to(:read, template) }
     it { is_expected.not_to be_able_to(:create, build(:template, curator: curator)) }
     it { is_expected.not_to be_able_to(:update, template) }
-    it { is_expected.not_to be_able_to(:destroy, template) }
     it { is_expected.not_to be_able_to(:destroy, template) }
 
     context "with administrative privileges" do
@@ -89,7 +101,6 @@ describe Ability, :type => :model do
       it_behaves_like "curator clearance"
       it { is_expected.not_to be_able_to(:manage, client) }
       it { is_expected.to be_able_to(:manage, curator) }
-      #it { is_expected.to be_able_to(:deactivate, curator) }
       it { is_expected.not_to be_able_to(:destroy, curator) }
 
       it { is_expected.to be_able_to(:read, template) }
