@@ -2,7 +2,7 @@
 
 <ul id="updates">
   <% @updates.each do |update| %>
-    <li><%= link_to update.time, board_update_path(@board, update) %> <%= edit_link board_update_path(@board, update) %></li>
+    <li><%= render partial: 'item', locals: { update: update, board: @board } %></li>
   <% end %>
 </ul>
 

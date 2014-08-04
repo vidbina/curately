@@ -1,4 +1,14 @@
 <p id="notice"><%= notice %></p>
 
+<p>Curator: <%= link_to @board.curator.name, @board.curator %></p>
+<p>Client: <%= link_to @board.client.name, @board.client %></p>
+<p>Template: <%= link_to @board.template.name, curator_template_path(@board.curator) %></p>
+
+<ul id="updates">
+  <% @board.updates.each do |update| %>
+    <li><%= render partial: 'updates/item', locals: { update: update, board: @board } %></li>
+  <% end %>
+</ul>
+
 <%= link_to 'Edit', edit_board_path(@board) %> |
 <%= link_to 'Back', boards_path %>
