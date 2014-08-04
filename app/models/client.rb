@@ -8,4 +8,18 @@ class Client < ActiveRecord::Base
 
   has_many :memberships, dependent: :destroy
   has_many :curatorships, through: :curator
+
+  def active?
+    self[:is_active]
+  end
+
+  def deactivate
+    self[:is_active] = false
+    save
+  end
+
+  def activate
+    self[:is_active] = true
+    save
+  end
 end

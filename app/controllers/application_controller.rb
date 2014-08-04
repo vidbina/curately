@@ -3,8 +3,9 @@ class ApplicationController < ActionController::Base
   # For APIs, you may want to use :null_session instead.
   protect_from_forgery with: :exception
 
-  rescue_from CanCan::AccessDenied do |exeption|
-    render status: :forbidden, html: 'nope'
+  # TODO: proper rendering based one format
+  rescue_from CanCan::AccessDenied do |e|
+    render status: :forbidden, html: 'forbidden'
   end
 
   rescue_from ActiveRecord::RecordNotFound, with: :record_not_found

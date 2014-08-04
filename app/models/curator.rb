@@ -12,16 +12,27 @@ class Curator < ActiveRecord::Base
   has_objectid_columns :template_id
 
   def template
-    if(@template)
-      @template
-    else
-      @template = Template.find(template_id) unless template_id.nil?
-    end
+    @template ||= Template.find(self[:template_id].to_bson_id) if Template.where(id: self[:template_id].to_bson_id).exists?
   end
 
   def template=(template)
     write_attribute(:template_id, template.id.to_binary)
     @template = template
+  end
+
+  # TODO: extract this behaviour into reusable Module for Curator and Client
+  def active
+    self[:is_active]
+  end
+
+  def deactivate
+    self[:is_active] = false
+    save
+  end
+
+  def activate
+    self[:is_active] = true
+    save
   end
 
   def save

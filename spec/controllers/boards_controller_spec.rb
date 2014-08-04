@@ -5,7 +5,7 @@ describe BoardsController, :type => :controller do
   let(:client) { create(:client) }
   let(:board) { create(:board, curator: curator, client: client) }
   let(:user) { create(:user) }
-  let(:curatorship) { create(:curatorship, user: user, curator: curator) }
+  let(:curatorship) { create(:curatorship, user: user, curator: curator, is_admin: true) }
   let(:membership) { create(:membership, user: user, client: client) }
 
   before(:each) {

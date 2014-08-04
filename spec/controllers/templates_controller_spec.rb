@@ -72,7 +72,9 @@ describe TemplatesController, :type => :controller do
 
       it "assigns a new template as @template" do
         curatorship.curator.template.destroy
+        #p curatorship.curator.template
         get :new, { curator_id: curatorship.curator.id }, valid_session
+        expect(response.status).to eq(200)
         expect(assigns(:template)).to be_a_new(Template)
       end
 
@@ -111,7 +113,7 @@ describe TemplatesController, :type => :controller do
         sign_in :user, user
       end
   
-      it "redirects to new if it does not exists" do
+      it "returns not found if it does not exists" do
         curatorship.curator.template.destroy
         get :edit, { curator_id: curatorship.curator.id }, valid_session
         assert_response 404
