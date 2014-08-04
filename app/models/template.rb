@@ -15,7 +15,7 @@ class Template
   end
 
   def curator=(resource)
-    curator = Curator.find(resource[:id]) if resource.is_a? Hash
+    resource = Curator.find(resource[:id]) if resource.is_a? Hash
     self[:curator] = (({ id: resource.id, name: resource.name } if resource) or {})
     #p "curator is #{self[:curator]}"
   end

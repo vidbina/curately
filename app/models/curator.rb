@@ -12,10 +12,11 @@ class Curator < ActiveRecord::Base
   has_objectid_columns :template_id
 
   def template
-    @template ||= Template.find(self[:template_id].to_bson_id) if Template.where(id: self[:template_id].to_bson_id).exists?
+    @template ||= Template.find(self[:template_id].to_bson_id) if self[:template_id] && Template.where(id: self[:template_id].to_bson_id).exists?
   end
 
   def template=(template)
+    return unless template.kind_of? Template
     write_attribute(:template_id, template.id.to_binary)
     @template = template
   end

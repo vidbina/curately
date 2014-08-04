@@ -3,6 +3,7 @@ class Ability
 
   def initialize(user)
     #user ||= User.new
+    return unless user
     @user = user
 
     can :read, Client do |client|
@@ -10,7 +11,8 @@ class Ability
       #!user.memberships.where(client: client).empty?
     end
 
-    can [:create, :update], Client do |client|
+    can :create, Client
+    can :update, Client do |client|
       is_member_of? client, is_admin: true
     end
 
@@ -59,30 +61,38 @@ class Ability
       (is_curator_of? template.curator, is_admin: true) if template.curator
     end
 
-    can :read, Board do |board|
-      false
-      true if (is_member_of?(board.client) or is_curator_of?(board.curator))
+    can :manage, Element do |element|
+      false or (can?(:manage, element.template) if element.template)
+    end
+
+    can :read, Element do |element|
+      false or (can?(:read, element.template) if element.template)
     end
 
     can :manage, Board do |board|
       false or (true if is_curator_of? board.curator)
     end
 
-    can :read, Update do |update|
-      false or (true if can? :read, update.board)
+    can :read, Board do |board|
+      false
+      true if (is_member_of?(board.client) or is_curator_of?(board.curator))
     end
 
     can :manage, Update do |update|
       false or (true if can? :manage, update.board)
     end
+
+    can :read, Update do |update|
+      false or (true if can? :read, update.board)
+    end
   end
   
   private
   def is_curator_of?(curator, params={})
-    !@user.curatorships.where(params.merge(curator: curator)).empty?
+    !@user.curatorships.where(params.merge(curator: curator)).empty? if @user
   end
 
   def is_member_of?(client, params={})
-    !@user.memberships.where(params.merge(client: client)).empty?
+    !@user.memberships.where(params.merge(client: client)).empty? if @user
   end
 end

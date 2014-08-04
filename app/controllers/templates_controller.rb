@@ -58,6 +58,7 @@ class TemplatesController < ApplicationController
   end
 
   def set_template
+    raise Mongoid::Errors::DocumentNotFound unless @curator.template_id
     @template = Template.find(@curator.template_id.to_bson_id)
   end
 

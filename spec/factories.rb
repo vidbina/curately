@@ -29,7 +29,7 @@ FactoryGirl.define do
 
   factory :template do
     name      { Faker::HipsterIpsum.word }
-    curator   { create(:curator) }
+    curator   { create(:curator, template: self) }
   end
 
   factory :element do

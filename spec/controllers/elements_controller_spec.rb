@@ -1,11 +1,17 @@
 require 'rails_helper'
 
 describe ElementsController, :type => :controller do
-  let(:curatorship) { create(:curatorship, is_admin: true) }
+  let(:curator) { create(:curator, template: nil) }
+  let(:template) { create(:template, curator: curator) }
+  before(:each) {
+    curator.template = template
+    curator.save
+  }
+  let(:curatorship) { create(:curatorship, is_admin: true, curator: curator) }
   let(:request_params) { 
     { curator_id: curatorship.curator.id }
   }
-  let(:element) { create(:element, template: curatorship.curator.template) }
+  let(:element) { create(:element, template: template) }
   
   before(:context) do
     Template.destroy_all
@@ -17,9 +23,9 @@ describe ElementsController, :type => :controller do
 
   describe "GET index" do
     it "returns all elements for the template" do
-      2.times { create(:element, template: curatorship.curator.template) }
+      2.times { create(:element, template: template) }
       get :index, request_params
-      expect(assigns(:elements)).to match_array(curatorship.curator.template.elements)
+      expect(assigns(:elements)).to match_array(template.elements)
     end
   end
 
@@ -58,7 +64,7 @@ describe ElementsController, :type => :controller do
       expect { 
         request_params[:element] = build(:element, template: curatorship.curator.template).attributes
         post :create, request_params
-      }.to change{curatorship.curator.template.reload.elements.count}.by(1)
+      }.to change{template.reload.elements.count}.by(1)
     end
   end
 
@@ -66,7 +72,6 @@ describe ElementsController, :type => :controller do
     it "performs the update" do
       request_params[:id] = element.id
       request_params[:element] = { name: 'Spock' }
-      #expect_any_instance_of(Element).to receive(:update_attributes)
       expect {
         put :update, request_params
         element.reload
