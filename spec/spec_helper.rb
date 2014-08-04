@@ -11,3 +11,7 @@ end
 def basic_auth(user, password)
   ActionController::HttpAuthentication::Basic.encode_credentials user, password
 end
+
+def h(input)
+  ERB::Util.html_escape(input)
+end
