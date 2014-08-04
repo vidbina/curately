@@ -1,9 +1,10 @@
 class TemplatesController < ApplicationController
   before_action :authenticate_user!
+  before_action :load_parents
   before_action :set_template, only: [:show, :edit, :update, :destroy]
 
-  load_and_authorize_resource :curator
-  load_and_authorize_resource :template #, through: :curator
+  authorize_resource :curator
+  authorize_resource :template #, through: :curator
 
   def index
   end
@@ -12,16 +13,17 @@ class TemplatesController < ApplicationController
   end
 
   def new
-    authorize! :manage, @curator
-    redirect_to(curator_template_url(curator_id: @curator.id))
+    #authorize! :manage, @curator
+    redirect_to(curator_template_url(curator_id: @curator.id)) if @curator.template
+    @template = Template.new
   end
 
   def edit
     unless @template
-      authorize! :manage, @curator
+      #authorize! :manage, @curator
       redirect_to(curator_new_template_url(curator_id: params[:curator_id]))
     end
-    authorize! :manage, @templatae
+    #authorize! :manage, @templatae
   end
 
   def create
@@ -51,9 +53,13 @@ class TemplatesController < ApplicationController
   end
 
   private
+  def load_parents
+    @curator = Curator.find(params[:curator_id])
+  end
+
   def set_template
-    curator = Curator.find(params[:curator_id])
-    @template = curator.template
+    raise Mongoid::Errors::DocumentNotFound unless @curator.template_id
+    @template = Template.find(@curator.template_id.to_bson_id)
   end
 
   def template_params

@@ -2,41 +2,38 @@ class Ability
   include CanCan::Ability
 
   def initialize(user)
-    user ||= User.new
+    #user ||= User.new
+    return unless user
+    @user = user
 
     can :read, Client do |client|
-      !user.memberships.where(client: client).empty?
-    end
-
-    can :manage, Client do |client|
-      curator_admin(user, client.curator) || member_admin(user, client)
+      is_member_of?(client) || is_curator_of?(client.curator)
+      #!user.memberships.where(client: client).empty?
     end
 
     can :create, Client
-
     can :update, Client do |client|
-      member_admin(user, client)
+      is_member_of? client, is_admin: true
+    end
+
+    can :destroy, Client do |client|
+      (is_member_of? client, is_admin: true) if client.is_active == false
     end
 
     can :curate, Client do |client|
-      if client.curator
-        !user.curatorships.where(curator: client.curator).empty?
-      else
-        false
-      end
-    end
-
-    cannot :destroy, Client do |client|
-      unless client.is_active == false
-        member_admin(user, client)
-      end
+      (client.curator && is_curator_of?(client.curator))
     end
 
     can :manage, Curator do |curator|
-      if curator.new_record?
-        true
+      if user.new_record?
+        false
       else
-        curator_admin(user, curator)
+        if curator.new_record?
+          true
+        else
+          is_curator_of? curator, is_admin: true
+          #curator_admin(user, curator)
+        end
       end
     end
 
@@ -46,56 +43,56 @@ class Ability
       else
         false
         unless curator.is_active == false
-          curator_admin(user, curator)
+          is_curator_of? curator, is_admin: true
+          #curator_admin(user, curator)
         end
       end
     end
 
     can :manage, Template do |template|
-      if user.new_record?
-        false
-      else
-        if template.new_record?
-          true
-        else
-          curator = Curator.all.where(template_id: template.id.to_binary).first
-          if curator
-            !curator.curatorships.empty?
-          else
-            false
-          end
-        end
-      end
+      false or (can?(:manage, template.curator) if template.curator)
     end
 
-    can :read, Board do |board|
-      is_member = !user.memberships.where(client: board.client).empty?
-      is_curator = !user.curatorships.where(curator: board.curator).empty?
+    can :read, Template do |template|
+      (is_curator_of? template.curator) if template.curator
+    end
 
-      false
-      true if (is_member or is_curator)
+    can :create, Template do |template|
+      (is_curator_of? template.curator, is_admin: true) if template.curator
+    end
+
+    can :manage, Element do |element|
+      false or (can?(:manage, element.template) if element.template)
+    end
+
+    can :read, Element do |element|
+      false or (can?(:read, element.template) if element.template)
     end
 
     can :manage, Board do |board|
-      is_curator = !user.curatorships.where(curator: board.curator).empty?
-      false or true if is_curator
+      false or (true if is_curator_of? board.curator)
     end
 
-    can :read, Update do |update|
-      false or (true if can? :read, update.board)
+    can :read, Board do |board|
+      false
+      true if (is_member_of?(board.client) or is_curator_of?(board.curator))
     end
 
     can :manage, Update do |update|
       false or (true if can? :manage, update.board)
     end
+
+    can :read, Update do |update|
+      false or (true if can? :read, update.board)
+    end
   end
   
   private
-  def member_admin(user, client)
-    !user.memberships.where(client: client, is_admin: true).empty?
+  def is_curator_of?(curator, params={})
+    !@user.curatorships.where(params.merge(curator: curator)).empty? if @user
   end
 
-  def curator_admin(user, curator)
-    !user.curatorships.where(curator: curator, is_admin: true).empty?
+  def is_member_of?(client, params={})
+    !@user.memberships.where(params.merge(client: client)).empty? if @user
   end
 end

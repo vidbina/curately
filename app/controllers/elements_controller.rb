@@ -4,9 +4,7 @@ class ElementsController < ApplicationController
   before_action :set_element, only: [:show, :edit, :update, :destroy]
   before_action :set_elements, only: [:index]
 
-  load_and_authorize_resource :curator
-  load_and_authorize_resource :template
-  load_resource :element
+  authorize_resource :element
 
   def index
   end

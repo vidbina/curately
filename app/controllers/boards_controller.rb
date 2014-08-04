@@ -2,7 +2,7 @@ class BoardsController < ApplicationController
   before_action :authenticate_user!
   before_action :set_board, only: [:show, :edit, :update, :destroy]
 
-  authorize_resource :template
+  authorize_resource :board
 
   # GET /boards
   # GET /boards.json
