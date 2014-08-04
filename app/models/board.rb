@@ -15,6 +15,10 @@ class Board
     (curator.template.elements if curator && curator.template) or []
   end
 
+  def template
+    curator.template
+  end
+
 #  def history
 #    self[:content] or {}
 #  end
