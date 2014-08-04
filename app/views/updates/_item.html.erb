@@ -1,1 +1,2 @@
-<%= link_to update.time, board_update_path(board, update) %> <%= edit_link board_update_path(board, update) %>
+<%= show_link update, board_update_path(board, update) %> <%= edit_link update, edit_board_update_path(board, update) %>
+<%= render partial: 'updates/summary', locals: { update: update, board: board } %>

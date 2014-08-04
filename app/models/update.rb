@@ -12,6 +12,12 @@ class Update
   before_save :ensure_elements_are_stored
   before_save :set_time
 
+  def elements
+    valid_elements.select{ |el| attributes.key? el.key }.map { |element|
+      { element => self[element.key] }
+    }.inject(&:merge)
+  end
+
   def setup_element_methods
     valid_elements.map { |el| el.key }.each { |element|
       self.class.send(:define_method, element, ->{ self[element.to_sym] })

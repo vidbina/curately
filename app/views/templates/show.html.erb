@@ -3,4 +3,4 @@
 <h2>Elements</h2>
 <%= link_to 'show available elements for this template', curator_template_elements_path(@curator) %>
 
-<%= edit_link edit_curator_template_path(@curator) %> <%= link_to 'Back', curator_path(@curator) %>
+<%= edit_link @template, edit_curator_template_path(@curator) %> <%= link_to 'Back', curator_path(@curator) %>

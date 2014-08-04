@@ -1,6 +1,9 @@
 <p id="notice"><%= notice %></p>
 
-<time datetime="<%= @update.time.to_s %>"></time>
+<p>Client: <%= link_to @update.board.client.name, @update.board.client %></p>
+<p>Curator: <%= link_to @update.board.curator.name, @update.board.curator %></p>
 
-<%= link_to 'Edit', edit_board_update_path(@board, @update) %> |
+<%= render partial: 'detail', locals: { update: @update } %>
+
+<%= edit_link @update, edit_board_update_path(@board, @update) %>
 <%= link_to 'Back', board_updates_path(@board) %>

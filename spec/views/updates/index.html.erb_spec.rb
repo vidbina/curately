@@ -8,10 +8,9 @@ describe "updates/index", :type => :view do
       stub_model(Update, attributes_without_id(build(:update))),
       stub_model(Update, attributes_without_id(build(:update))),
       stub_model(Update, attributes_without_id(build(:update)))
-    ])
-  end
-
-  before(:each) do
+    ]).each do |update|
+      allow(update).to receive(:elements).and_return([])
+    end
     render
   end
 

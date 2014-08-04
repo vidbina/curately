@@ -1,0 +1,9 @@
+<dl class="update">
+  <dt>Time</dt>
+  <dd><time datetime="<%= update.time.to_s %>"><%= update.time.to_s %></time></dd>
+  <% update.elements.each do |k , v| %>
+    <dt><%= k.name %></dt>
+    <dd><%= v %></dd>
+  <% end %>
+</dl>
+
