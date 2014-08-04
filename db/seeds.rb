@@ -3,7 +3,6 @@ require File.expand_path("../../spec/factories.rb", __FILE__)
 
 class Seed
   include FactoryGirl::Syntax::Methods
-  FactoryGirl.lint
 
   def plant
     build_enterprise
@@ -20,19 +19,27 @@ class Seed
     kirk       = create(:user, email: 'kirk@enterprise.org', password: 'Still captain')
     enterprise = create(:curator, name: 'The Enterprise', shortname: 'enterprise')
     facts      = create(:template, name: 'Intergallactic Observations', curator: enterprise)
+                 create(:curatorship, curator: enterprise, user: kirk, is_admin: true)
+                 create(:curatorship, curator: enterprise, user: spock, is_admin: false)
     enterprise.template = facts
     enterprise.save
-                 create(:element, name: 'average temperature', template: facts)
+    create(:element, name: 'average temperature', template: facts)
                  create(:element, name: 'average disposition', template: facts)
                  create(:element, name: 'airborne vessels', template: facts)
                  create(:element, name: 'systems at war', template: facts)
                  create(:element, name: 'systems at peace', template: facts)
                  create(:element, name: 'truces', template: facts)
-                 create(:client,  name: 'Interstellar Cosmography', shortname: 'intcosmo', curator: enterprise)
-                 create(:client,  name: 'Laser News Network', shortname: 'lnn', curator: enterprise)
-                 create(:client,  name: 'The New New Yorker', shortname: 'newnewyorker', curator: enterprise)
-                 create(:curatorship, curator: enterprise, user: kirk, is_admin: true)
-                 create(:curatorship, curator: enterprise, user: spock, is_admin: false)
+    intcosmo   = create(:client,  name: 'Interstellar Cosmography', shortname: 'intcosmo', curator: enterprise)
+    lnn        = create(:client,  name: 'Laser News Network', shortname: 'lnn', curator: enterprise)
+    nnewyorker = create(:client,  name: 'The New New Yorker', shortname: 'newnewyorker', curator: enterprise)
+
+    board      = create(:board, curator: enterprise, client: intcosmo)
+                 create(:board, curator: enterprise, client: lnn)
+                 create(:board, curator: enterprise, client: nnewyorker)
+
+    update = board.updates.create('systems_at_war' => 1, 'systems_at_peace' => 1221)
+    board.updates.create('systems_at_war' => 3, 'systems_at_peace' => 1218)
+    board.updates.create('systems_at_war' => 994, 'systems_at_peace' => 207)
   end
     
   def build_force
@@ -57,6 +64,9 @@ class Seed
                  create(:membership, client: jas_n_bob, user: jasmine, is_admin: true)
                  create(:membership, client: jas_n_bob, user: bob, is_admin: true)
                  create(:membership, client: jas_n_bob, user: kwame, is_admin: false)
+
+                 create(:board, curator: slowforce, client: jas_n_bob)
+                 create(:board, curator: slowforce, client: hyrule)
   end
     
   def build_books
@@ -72,11 +82,18 @@ class Seed
                  create(:element, name: 'profit', template: numbers)
                  create(:element, name: 'loss', template: numbers)
                  create(:client, name: 'Sparrow Hair Studio', shortname: 'sparrowhair', curator: chi_and_co)
-                 create(:client, name: 'Premium Tobacco', shortname: 'premiumsmokes', curator: chi_and_co)
+    premium    = create(:client, name: 'Premium Tobacco', shortname: 'premiumsmokes', curator: chi_and_co)
                  create(:client, name: 'Bobby Burgers', shortname: 'bburgers', curator: chi_and_co)
                  create(:client, name: 'BlastYard Labs', shortname: 'blastlab', curator: chi_and_co)
                  create(:curatorship, curator: chi_and_co, user: bookkeeper, is_admin: true)
                  create(:curatorship, curator: chi_and_co, user: daughter, is_admin: false)
+
+    board      = create(:board, curator: chi_and_co, client: premium)
+
+    board.updates.create(revenue: 3000, expenses: 1500)
+    board.updates.create(revenue: 400, expenses: 350)
+    board.updates.create(revenue: 400, expenses: 350)
+    board.updates.create(revenue: 80, expenses: 130)
   end
 
   def build_law
